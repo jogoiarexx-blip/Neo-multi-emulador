@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {PPU} from '../js/ppu.js';
+import {PALETTES,parsePalBytes} from '../js/palettes.js';
+const p=new PPU();
+const original=p.rgb(1);p.setDisplayPalette(PALETTES.unsaturated);assert.notEqual(p.rgb(1),original);p.resetDisplayPalette();assert.equal(p.rgb(1),original);
+const bytes=new Uint8Array(192);for(let i=0;i<64;i++){bytes[i*3]=i;bytes[i*3+1]=255-i;bytes[i*3+2]=i*3&255}const custom=parsePalBytes(bytes);assert.equal(custom.length,64);p.setDisplayPalette(custom);assert.equal(p.displayPalette[0],0x00ff00);
+assert.throws(()=>parsePalBytes(new Uint8Array(10)));
+const shader=fs.readFileSync(new URL('../js/video-renderer.js',import.meta.url),'utf8');for(const token of ['uScanline','uMask','uGlow','uCurvature','uVignette','sampleSharp'])assert.ok(shader.includes(token));
+const html=fs.readFileSync(new URL('../index.html',import.meta.url),'utf8');for(const token of ['CRT Professional','Composite NTSC','palettePreset','paletteFile'])assert.ok(html.includes(token));
+console.log('v0.8.4 GPU video/palette tests passed');

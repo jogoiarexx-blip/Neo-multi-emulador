@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>NEO NES Emulator v0.8.12</title>
+<meta name="theme-color" content="#ef4444">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="/shared/core-embed.css?v=0.1.6">
+</head>
+<body>
+<div id="updateBanner" class="update-banner hidden" role="status"><span><strong>Nova versão disponível</strong><small>Atualize sem apagar seus saves do IndexedDB.</small></span><button id="updateNowBtn">Update & Restart</button></div>
+<div id="app">
+  <header>
+    <div><h1>NEO NES <small>v0.8.12</small></h1><p>Console retrô moderno • biblioteca • baixa latência • offline</p></div>
+    <div class="header-actions"><button id="commandPaletteBtn" class="icon-action" type="button" title="Comandos (Ctrl+K)">⌘K</button><div id="status">Sem ROM</div></div>
+  </header>
+  <nav id="appNav" class="app-nav" aria-label="Navegação principal">
+    <button type="button" data-ui-view="home" class="active">⌂ <span>Início</span></button>
+    <button type="button" data-ui-view="play">▶ <span>Jogar</span></button>
+    <button type="button" data-ui-view="library">▦ <span>Biblioteca</span></button>
+    <button type="button" data-ui-view="settings">⚙ <span>Ajustes</span></button>
+    <button type="button" data-ui-view="saves">💾 <span>Saves</span></button>
+    <button type="button" data-ui-view="tools">⌘ <span>Ferramentas</span></button>
+  </nav>
+  <main>
+    <section class="screen-wrap ui-group-play">
+      <canvas id="screen" width="256" height="240"></canvas>
+      <div id="perfOverlay" class="perf-overlay hidden">FPS 0<br>Frame 0.0 ms<br>Rewind 0.0 s</div><div id="gameHud" class="game-hud hidden"></div>
+      <div id="overlay" class="overlay">Carregue .nes/.zip, NSF/NSFe ou FDS</div>
+    </section>
+
+    <section class="toolbar ui-group-play">
+      <label class="file-btn">Abrir jogo / música<input id="romInput" type="file" accept=".nes,.zip,.nsf,.nsfe,.fds,application/octet-stream,application/zip,application/x-zip-compressed"></label>
+      <button id="playBtn">▶ Jogar</button><button id="pauseBtn">⏸ Pausar</button><button id="resetBtn">↻ Reset</button>
+      <label class="slot-picker">Slot <select id="stateSlot"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></label><button id="prevSlotBtn" title="Slot anterior">◀ Slot</button><button id="saveBtn">Salvar Estado</button><button id="loadBtn">Carregar Estado</button><button id="nextSlotBtn" title="Próximo slot">Slot ▶</button><button id="rewindBtn">⏪ Rewind</button><button id="screenshotBtn">📷 Screenshot</button>
+      <button id="fullscreenBtn">Tela Cheia</button><button id="controlsBtn">Controles</button><button id="diagBtn">Diagnóstico</button>
+    </section>
+
+    <section class="panel graphics-panel ui-group-settings">
+      <div class="section-title"><div><strong>Vídeo e upscale</strong><small>O NES continua renderizando internamente em 256×240; esta camada melhora apenas a apresentação.</small></div><span id="outputInfo" class="output-chip">256×240</span></div>
+      <div class="video-settings">
+        <label>Renderizador
+          <select id="videoBackend"><option value="auto" selected>Auto (WebGL2)</option><option value="webgl">WebGL2</option><option value="canvas">Canvas 2D</option></select>
+        </label>
+        <label>Preset
+          <select id="videoPreset">
+            <option value="original">Original</option>
+            <option value="pixel" selected>Pixel Nítido</option>
+            <option value="smooth">Suave</option>
+            <option value="hd">Sharp Bilinear</option>
+            <option value="sharp">Sharp Bilinear</option>
+            <option value="crt-lite">CRT Light</option>
+            <option value="crt-consumer">CRT Consumer</option>
+            <option value="crt-pro">CRT Professional</option>
+            <option value="composite">Composite NTSC</option>
+            <option value="lcd">LCD</option>
+          </select>
+        </label>
+        <label>Upscale
+          <select id="upscaleSelect">
+            <option value="auto" selected>Auto (escala inteira)</option><option value="native">1×</option><option value="2">2×</option><option value="3">3×</option><option value="4">4×</option><option value="5">5×</option><option value="6">6×</option><option value="fit">Fit</option><option value="stretch">Stretch</option><option value="720">720p</option><option value="1080">1080p</option><option value="1440">1440p</option>
+          </select>
+        </label>
+        <label>Proporção
+          <select id="aspectSelect"><option value="source">Original 256:240</option><option value="4:3" selected>TV 4:3</option></select>
+        </label>
+        <label>Overscan <span id="overscanInfo" class="mini-value">T0 B0 L0 R0</span>
+          <select id="overscanPreset"><option value="full" selected>Full (sem corte)</option><option value="consumer">Consumer CRT</option><option value="custom">Custom</option></select>
+        </label>
+        <label class="overscan-custom hidden">Top <input id="overscanTop" type="number" min="0" max="32" value="0"></label>
+        <label class="overscan-custom hidden">Bottom <input id="overscanBottom" type="number" min="0" max="32" value="0"></label>
+        <label class="overscan-custom hidden">Left <input id="overscanLeft" type="number" min="0" max="32" value="0"></label>
+        <label class="overscan-custom hidden">Right <input id="overscanRight" type="number" min="0" max="32" value="0"></label>
+        <label>Paleta
+          <select id="palettePreset"><option value="neo" selected>NEO Padrão</option><option value="consumer">Consumer</option><option value="rgb">RGB</option><option value="unsaturated">Unsaturated</option><option value="composite">Composite</option></select>
+        </label>
+        <label class="file-btn mini-file">Importar .pal<input id="paletteFile" type="file" accept=".pal,application/octet-stream"></label>
+        <label>Brilho <input id="brightnessRange" type="range" min="75" max="125" value="100"><span id="brightnessValue">100%</span></label>
+        <label>Saturação <input id="saturationRange" type="range" min="60" max="150" value="100"><span id="saturationValue">100%</span></label>
+        <label>Gamma <input id="gammaRange" type="range" min="70" max="140" value="100"><span id="gammaValue">100%</span></label>
+        <label>Nitidez GPU <input id="sharpnessRange" type="range" min="0" max="100" value="65"><span id="sharpnessValue">65%</span></label>
+        <label>Scanlines <input id="scanlineRange" type="range" min="0" max="100" value="55"><span id="scanlineValue">55%</span></label>
+        <label>Shadow mask <input id="maskRange" type="range" min="0" max="100" value="35"><span id="maskValue">35%</span></label>
+        <label>Glow <input id="glowRange" type="range" min="0" max="100" value="25"><span id="glowValue">25%</span></label>
+        <label>Curvatura <input id="curvatureRange" type="range" min="0" max="20" value="8"><span id="curvatureValue">8%</span></label>
+        <label>Vignette <input id="vignetteRange" type="range" min="0" max="100" value="20"><span id="vignetteValue">20%</span></label>
+        <label><input id="soundToggle" type="checkbox" checked> Áudio</label>
+        <label>Fast-forward
+          <select id="speedSelect"><option value="1">1×</option><option value="2" selected>2×</option><option value="3">3×</option><option value="4">4×</option></select>
+        </label>
+        <label><input id="turboToggle" type="checkbox"> Fast-forward</label>
+        <label>Perfil de desempenho
+          <select id="performanceProfile"><option value="auto" selected>Auto</option><option value="accuracy">Accuracy</option><option value="balanced">Balanced</option><option value="performance">Performance</option></select>
+        </label>
+        <label class="hidden"><input id="performanceToggle" type="checkbox"> Modo desempenho (legado)</label>
+        <label>Latência de áudio
+          <select id="audioLatency"><option value="auto" selected>Auto adaptativa</option><option value="interactive">Baixa</option><option value="balanced">Balanceada</option><option value="playback">Estável</option></select>
+        </label>
+        <label><input id="autoBootToggle" type="checkbox"> Iniciar jogo incluído automaticamente</label>
+        <label><input id="autoPauseToggle" type="checkbox" checked> Pausar ao sair da aba</label>
+        <label>Autosave rápido<select id="autosaveInterval"><option value="0">Desligado</option><option value="5">5 s</option><option value="10" selected>10 s</option><option value="30">30 s</option><option value="60">60 s</option></select></label>
+        <label>Sincronização<select id="syncMode"><option value="vsync" selected>60 Hz preciso</option><option value="adaptive">Adaptativa</option></select></label>
+        <label>Run-ahead<select id="runAheadSelect"><option value="0" selected>Desligado</option><option value="1">1 frame (menor input lag)</option><option value="2">2 frames (experimental)</option></select></label>
+        <label><input id="perfOverlayToggle" type="checkbox"> Overlay de desempenho</label>
+        <label><input id="gameHudToggle" type="checkbox"> HUD de jogo</label>
+        <label><input id="confirmOverwriteToggle" type="checkbox" checked> Confirmar sobrescrita de save</label>
+        <label><input id="autoLandscapeToggle" type="checkbox" checked> Paisagem automática em tela cheia</label>
+        <label><input id="autoCompatibilityToggle" type="checkbox" checked> Compatibilidade automática para ROMs exigentes</label>
+      </div>
+    </section>
+
+    <section class="panel media-panel ui-group-settings">
+      <div class="section-title"><div><strong>NSF / NSFe & Famicom Disk System</strong><small>Player de música usando a CPU/APU do NEO NES e preparação segura para discos FDS.</small></div><span id="mediaModeBadge" class="output-chip">NES</span></div>
+      <div id="nsfPanel" class="media-box hidden">
+        <div><strong id="nsfTitle">NSF</strong><small id="nsfArtist" class="muted"></small></div>
+        <div class="quick-actions"><button id="nsfPrevBtn">⏮ Faixa</button><button id="nsfPlayBtn">▶ Tocar</button><button id="nsfPauseBtn">⏸ Pausar</button><button id="nsfNextBtn">Faixa ⏭</button></div>
+        <label>Faixa <select id="nsfTrackSelect"></select></label>
+        <div id="nsfMeta" class="diag-output">Nenhum NSF carregado.</div>
+      </div>
+      <div id="fdsPanel" class="media-box hidden">
+        <div class="quick-actions"><label class="file-btn compact">Configurar BIOS FDS<input id="fdsBiosInput" type="file" accept=".bin,application/octet-stream"></label><button id="fdsClearBiosBtn">Remover BIOS</button></div>
+        <div class="quick-actions fds-drive-controls">
+          <label>Lado <select id="fdsSideSelect"><option value="0">Lado A</option></select></label>
+          <button id="fdsInsertBtn">💾 Inserir</button><button id="fdsEjectBtn">⏏ Ejetar</button>
+          <label class="check-row"><input id="fdsWriteProtect" type="checkbox"> Proteção de escrita</label>
+        </div>
+        <div id="fdsMeta" class="diag-output">Nenhum disco FDS carregado.</div>
+      </div>
+    </section>
+
+    <section class="panel home-panel ui-group-home">
+      <div class="section-title"><div><strong>Início rápido</strong><small>Continue de onde parou ou escolha um dos jogos incluídos</small></div></div>
+      <div class="quick-actions continue-action">
+        <button id="continueBtn" class="primary-action" disabled>▶ Continuar último jogo</button>
+      </div>
+      <div id="bundledGames" class="bundled-games" aria-label="Jogos incluídos"></div>
+      <small id="continueInfo" class="muted">Nenhuma sessão recente encontrada.</small>
+      <div id="gameDetails" class="game-details hidden" aria-live="polite"></div>
+    </section>
+
+    <section class="library panel ui-group-home ui-group-library">
+      <div class="section-title"><div><strong>Biblioteca local</strong><small>Jogos recentes ficam armazenados neste navegador</small></div><button id="clearLibraryBtn" class="danger-lite">Limpar</button></div>
+      <div class="library-tools">
+        <input id="librarySearch" type="search" placeholder="Buscar jogo..." autocomplete="off">
+        <select id="librarySort"><option value="recent">Mais recentes</option><option value="name">A–Z</option><option value="favorite">Favoritos primeiro</option><option value="played">Mais jogados</option></select>
+        <label class="fav-filter"><input id="favoritesOnly" type="checkbox"> ★ Só favoritos</label>
+      </div>
+      <div id="libraryList" class="library-list"><span class="muted">Nenhum jogo salvo ainda.</span></div>
+    </section>
+
+    <section class="info-grid ui-group-play">
+      <div><strong>ROM</strong><span id="romName">-</span></div><div><strong>Mapper</strong><span id="mapperName">-</span></div>
+      <div><strong>PRG</strong><span id="prgInfo">-</span></div><div><strong>CHR</strong><span id="chrInfo">-</span></div><div><strong>FPS</strong><span id="fps">0</span></div>
+    </section>
+
+
+    <section class="panel cheats-panel ui-group-settings">
+      <div class="section-title"><div><strong>Cheats / Game Genie</strong><small>Códigos de 6 ou 8 letras. Também aceita formato hexadecimal AAAA:VV ou AAAA?CC:VV.</small></div><span id="cheatCount" class="output-chip">0 ativos</span></div>
+      <div class="cheat-entry"><input id="cheatInput" type="text" maxlength="32" placeholder="Ex.: GOSSIP"><button id="addCheatBtn">Adicionar</button><button id="clearCheatsBtn" class="danger-lite">Limpar</button></div>
+      <div id="cheatList" class="cheat-list"><span class="muted">Nenhum cheat ativo.</span></div>
+    </section>
+
+    <section id="controlsPanel" class="panel hidden ui-group-settings">
+      <div class="section-title"><div><strong>Configurar controles</strong><small>Teclado e gamepad podem ser remapeados separadamente e salvos por jogo.</small></div><div class="control-profile-actions"><span id="controlProfileBadge" class="output-chip">Perfil global</span><button id="copyGlobalControlsBtn">Usar global neste jogo</button><button id="defaultControlsBtn">Restaurar padrão</button></div></div>
+      <div class="gamepad-tools">
+        <label>Gamepad <select id="gamepadSelect"><option value="auto">Automático</option></select></label>
+        <label>Deadzone <input id="deadzoneRange" type="range" min="5" max="80" value="35"><span id="deadzoneValue">35%</span></label>
+        <button id="rumbleBtn" type="button">Testar vibração</button>
+        <span id="gamepadStatus" class="muted">Nenhum gamepad detectado.</span>
+        <label>Jogador 2 <select id="gamepad2Select"><option value="auto">Automático (2º controle)</option></select></label>
+        <label>Jogador 3 <select id="gamepad3Select"><option value="auto">Automático (3º controle)</option></select></label>
+        <label>Jogador 4 <select id="gamepad4Select"><option value="auto">Automático (4º controle)</option></select></label>
+        <label><input id="fourScoreToggle" type="checkbox"> Four Score (4 jogadores)</label>
+        <label>Porta 2 <select id="port2Device"><option value="controller">Controle</option><option value="zapper">Zapper</option></select></label>
+        <span class="muted">P2 teclado: WASD • N=A • M=B • B=Start • V=Select • P3 teclado: teclado numérico</span>
+      </div>
+      <div class="touch-settings"><label>Touch tamanho <input id="touchScaleRange" type="range" min="70" max="150" value="100"><span id="touchScaleValue">100%</span></label><label>Opacidade <input id="touchOpacityRange" type="range" min="30" max="100" value="85"><span id="touchOpacityValue">85%</span></label><label><input id="touchHapticsToggle" type="checkbox" checked> Vibração touch</label></div>
+      <div class="control-head"><span>Botão NES</span><span>Teclado</span><span>Gamepad</span></div>
+      <div id="controlRows" class="control-grid"></div>
+      <div class="section-title hotkey-title"><div><strong>Atalhos do emulador</strong><small>Remapeie pause, tela cheia, saves, rewind, turbo e screenshot.</small></div><button id="defaultHotkeysBtn">Restaurar atalhos</button></div>
+      <div id="hotkeyRows" class="control-grid hotkey-grid"></div>
+      <small class="muted hotkeys">Atalhos: P = pausar/continuar • F = tela cheia • F5 = salvar no slot atual • F8 = carregar do slot atual • segure Espaço = fast-forward • segure R = rewind • K = screenshot.</small>
+    </section>
+
+
+    <section class="panel save-manager-panel ui-group-saves">
+      <div class="section-title"><div><strong>Gerenciador de saves</strong><small>Veja, carregue, exporte ou importe cada slot separadamente.</small></div><span class="output-chip">10 slots + miniaturas</span></div>
+      <div id="saveSlotCards" class="save-slot-cards"></div>
+      <div class="save-manager-actions">
+        <button id="exportStateBtn">⬇ Exportar .neosave</button>
+        <label class="file-btn compact">⬆ Importar .neosave / legado<input id="importStateInput" type="file" accept=".neosave,application/x-neo-nes-save+json,application/json,.json"></label>
+      </div>
+      <small class="muted">O .neosave inclui ROM hash/CRC, mapper, região, timestamp, thumbnail e checksum. Saves JSON antigos continuam aceitos.</small>
+    </section>
+
+    <section class="panel backup-panel ui-group-saves">
+      <div class="section-title"><div><strong>Backup e restauração</strong><small>Exporte configurações, cheats, perfis e save states para um arquivo JSON.</small></div><span class="output-chip">v1.5</span></div>
+      <div class="backup-actions">
+        <button id="exportBackupBtn">⬇ Exportar backup</button>
+        <label class="file-btn compact">⬆ Restaurar backup<input id="importBackupInput" type="file" accept="application/json,.json"></label>
+      </div>
+      <small class="muted">ROMs não são incluídas no backup. Os jogos embutidos continuam no pacote do emulador.</small>
+    </section>
+
+    <section id="diagPanel" class="diag hidden ui-group-tools"><strong>Diagnóstico interno</strong><div class="diag-actions"><button id="selfTestBtn">Executar auto-teste</button><label class="dev-toggle"><input id="devModeToggle" type="checkbox"> Dev Mode</label><label>Log <select id="logLevelSelect"><option value="error">Error</option><option value="warning" selected>Warning</option><option value="info">Info</option><option value="debug">Debug</option><option value="trace">Trace</option></select></label><button id="copyCrashBtn">Copiar Crash Report</button><button id="clearCrashBtn">Limpar Crash</button></div><pre id="diagOutput"></pre><pre id="selfTestOutput" class="self-test-output">Auto-teste ainda não executado.</pre><pre id="crashOutput" class="self-test-output">Nenhum crash registrado nesta sessão.</pre></section>
+
+    <section id="devPanel" class="panel dev-panel hidden ui-group-tools"><div class="section-title"><div><strong>Dev Mode — Debugger & Memory Tools</strong><small>Ferramentas avançadas. Desligadas no uso normal.</small></div><span class="output-chip">v0.8.12</span></div><div class="dev-actions"><button id="stepInstructionBtn">Step instrução</button><button id="stepScanlineBtn">Step scanline</button><button id="stepFrameBtn">Step frame</button><input id="breakpointPc" inputmode="text" maxlength="6" placeholder="Endereço ex. C000"><select id="breakpointType"><option value="exec">Exec</option><option value="read">Read</option><option value="write">Write</option></select><button id="addBreakpointBtn">Adicionar breakpoint</button><button id="runToPcBtn">Executar até PC</button><button id="clearBreakpointsBtn">Limpar BPs</button><label class="dev-toggle"><input id="breakNmiToggle" type="checkbox"> NMI</label><label class="dev-toggle"><input id="breakIrqToggle" type="checkbox"> IRQ</label><label class="dev-toggle"><input id="breakSprite0Toggle" type="checkbox"> Sprite 0</label></div><div class="dev-actions"><label class="dev-toggle"><input id="traceToggle" type="checkbox"> Trace</label><button id="clearTraceBtn">Limpar trace</button><button id="exportTraceBtn">Exportar trace</button><input id="memoryAddress" inputmode="text" maxlength="6" value="0000" placeholder="Memória ex. 6000"><button id="refreshMemoryBtn">Atualizar memória</button><button id="copyTraceBtn">Copiar estado</button></div><div class="dev-grid dev-grid-3"><pre id="devOutput">Carregue uma ROM.</pre><pre id="disasmOutput"></pre><pre id="memoryOutput"></pre></div><pre id="breakpointOutput" class="dev-breakpoints">Breakpoints: —</pre><div class="section-title ppu-view-title"><div><strong>PPU Viewers</strong><small>Pattern tables, nametable, palette e OAM em tempo real. Leituras sem efeitos colaterais.</small></div><button id="refreshPpuViewersBtn">Atualizar viewers</button></div><div class="ppu-view-grid"><figure><figcaption>Pattern $0000</figcaption><canvas id="patternTable0"></canvas></figure><figure><figcaption>Pattern $1000</figcaption><canvas id="patternTable1"></canvas></figure><figure class="wide"><figcaption>Nametable</figcaption><canvas id="nametableViewer"></canvas></figure><figure><figcaption>Palette</figcaption><canvas id="paletteViewer"></canvas></figure><figure class="wide"><figcaption>OAM / Sprites</figcaption><canvas id="oamViewer"></canvas></figure></div></section>
+
+    <section class="touch ui-group-play" id="touchControls">
+      <div class="dpad"><button data-bit="4">▲</button><div><button data-bit="6">◀</button><button data-bit="5">▼</button><button data-bit="7">▶</button></div></div>
+      <div class="middle"><button data-bit="2">SELECT</button><button data-bit="3">START</button></div>
+      <div class="ab"><button class="b" data-bit="1">B</button><button class="a" data-bit="0">A</button></div>
+    </section>
+  </main>
+  <footer>Setas • Z=A • X=B • Enter=Start • Shift=Select • P=Pause • F=Fullscreen • R=Rewind • K=Screenshot • F5/F8=Save/Load • 2 jogadores • gamepad configurável • touch</footer>
+</div>
+<div id="uiToast" class="ui-toast" role="status" aria-live="polite"></div>
+<div id="commandPalette" class="command-palette hidden" role="dialog" aria-modal="true" aria-label="Paleta de comandos">
+  <div class="command-card">
+    <div class="command-head"><strong>Comandos rápidos</strong><button id="closeCommandPalette" type="button" aria-label="Fechar">✕</button></div>
+    <input id="commandSearch" type="search" placeholder="Digite uma ação…" autocomplete="off">
+    <div id="commandList" class="command-list"></div>
+    <small>Ctrl+K abre • Esc fecha • ↑↓ navega • Enter executa</small>
+  </div>
+</div>
+
+<script type="module" src="js/ui-shell.js"></script>
+<script type="module" src="js/main.js"></script>
+  <script src="/shared/core-bridge.js?v=0.1.6"></script>
+  <script src="/shared/adapters/nes.js?v=0.1.6"></script>
+</body>
+</html>

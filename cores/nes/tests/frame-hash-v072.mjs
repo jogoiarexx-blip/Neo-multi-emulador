@@ -1,0 +1,4 @@
+import fs from 'node:fs';import path from 'node:path';import {Cartridge} from '../js/cartridge.js';import {Bus} from '../js/bus.js';
+function fnv33(arr){let h=0x811c9dc5;const u=new Uint8Array(arr.buffer,arr.byteOffset,arr.byteLength);for(const v of u){h^=v;h=Math.imul(h,0x01000193)}return (h>>>0).toString(16).padStart(8,'0')}
+const expected={'ducktales-usa.nes':'11e41e26','teenage-mutant-ninja-turtles-usa.nes':'449a818f'};
+for(const [f,want] of Object.entries(expected)){const b=fs.readFileSync(path.join('roms',f)),bus=new Bus();bus.insertCartridge(new Cartridge(b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength)));bus.reset();for(let frame=0;frame<120;frame++){bus.ppu.frameComplete=false;let g=0;while(!bus.ppu.frameComplete&&g++<200000)bus.clock()}const got=fnv33(bus.ppu.image);if(got!==want)throw new Error(`${f}: frame hash ${got} != ${want}`);console.log('OK frame hash',f,got)}
