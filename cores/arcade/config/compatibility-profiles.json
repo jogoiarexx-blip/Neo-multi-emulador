@@ -1,0 +1,20 @@
+{
+  "games": {},
+  "hardwareDefaults": {
+    "Neo Geo": {
+      "preferredCore": "fbneo"
+    },
+    "CPS-1": {
+      "preferredCore": "fbneo"
+    },
+    "CPS-2": {
+      "preferredCore": "fbneo"
+    },
+    "CPS-3": {
+      "preferredCore": "fbneo"
+    },
+    "PGM": {
+      "preferredCore": "fbneo"
+    }
+  }
+}

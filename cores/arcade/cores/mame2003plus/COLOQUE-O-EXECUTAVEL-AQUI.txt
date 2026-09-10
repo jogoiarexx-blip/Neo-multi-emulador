@@ -1,0 +1,1 @@
+Coloque aqui o executável correspondente ao core mame2003plus. O NEO ARCADE não distribui binários de terceiros.

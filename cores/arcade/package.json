@@ -1,0 +1,10 @@
+{
+  "name": "neo-arcade",
+  "version": "0.2.9",
+  "private": true,
+  "description": "Frontend local para biblioteca arcade com roteamento automático de cores.",
+  "scripts": {
+    "start": "node server.js",
+    "import:mame": "node tools/import-mame.js"
+  }
+}

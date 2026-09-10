@@ -1,0 +1,263 @@
+{
+  "appName": "NEO ARCADE",
+  "version": "0.2.9",
+  "port": 4780,
+  "defaultCore": "auto",
+  "autoResume": true,
+  "fullscreen": false,
+  "videoPreset": "pixel-perfect",
+  "romExtensions": [
+    ".zip",
+    ".7z",
+    ".chd"
+  ],
+  "cores": {
+    "fbneo": {
+      "label": "FinalBurn Neo",
+      "executable": "cores/fbneo/fbneo.exe",
+      "argsTemplate": [
+        "{rom}"
+      ]
+    },
+    "mame": {
+      "label": "MAME",
+      "executable": "cores/mame/mame.exe",
+      "argsTemplate": [
+        "{romName}",
+        "-rompath",
+        "{romDir}"
+      ]
+    },
+    "mame2003plus": {
+      "label": "MAME 2003 Plus",
+      "executable": "cores/mame2003plus/mame2003plus.exe",
+      "argsTemplate": [
+        "{rom}"
+      ]
+    }
+  },
+  "recursiveRomScan": true,
+  "showUnknownRoms": true,
+  "detectDuplicates": true,
+  "deepZipInspection": true,
+  "calculateSha1": true,
+  "biosExtensions": [
+    ".zip",
+    ".bin",
+    ".rom",
+    ".dat",
+    ".chd"
+  ],
+  "mameIndexFile": "database/mame-index.json",
+  "preferMameMetadata": true,
+  "coreRouting": {
+    "preferFbneoHardware": [
+      "Neo Geo",
+      "CPS-1",
+      "CPS-2",
+      "CPS-3",
+      "PGM"
+    ],
+    "fallbackCore": "mame"
+  },
+  "controls": {
+    "players": 4,
+    "defaultProfile": "arcade-default",
+    "profilesFile": "config/control-profiles.json"
+  },
+  "mameConfig": {
+    "cfgDir": "config/mame-cfg",
+    "generatedDir": "config/generated",
+    "autoGenerateBeforeLaunch": true
+  },
+  "hotkeys": {
+    "pause": "KeyP",
+    "exit": "Escape",
+    "saveState": "F5",
+    "loadState": "F8",
+    "coin1": "Digit5",
+    "start1": "Digit1"
+  },
+  "gamepad": {
+    "captureThreshold": 0.55,
+    "defaultPresets": [
+      "xbox",
+      "playstation",
+      "arcade-stick"
+    ]
+  },
+  "cabinetMode": {
+    "enabled": false,
+    "fullscreenFrontend": true,
+    "fullscreenMame": true,
+    "hideMouseCursor": true,
+    "autoReturnToLibrary": true
+  },
+  "mameRuntime": {
+    "stateDirectory": "states",
+    "snapshotDirectory": "screenshots",
+    "skipGameInfo": true,
+    "confirmQuit": false
+  },
+  "videoProfiles": {
+    "low": {
+      "label": "Baixa",
+      "mameArgs": [
+        "-video",
+        "auto",
+        "-filter",
+        "0",
+        "-waitvsync",
+        "0",
+        "-syncrefresh",
+        "0",
+        "-prescale",
+        "1"
+      ]
+    },
+    "medium": {
+      "label": "Média",
+      "mameArgs": [
+        "-video",
+        "auto",
+        "-filter",
+        "0",
+        "-waitvsync",
+        "1",
+        "-syncrefresh",
+        "0",
+        "-prescale",
+        "1"
+      ]
+    },
+    "high": {
+      "label": "Alta",
+      "mameArgs": [
+        "-video",
+        "auto",
+        "-filter",
+        "1",
+        "-waitvsync",
+        "1",
+        "-syncrefresh",
+        "1",
+        "-prescale",
+        "2"
+      ]
+    },
+    "pixel": {
+      "label": "Pixel Perfect",
+      "mameArgs": [
+        "-video",
+        "auto",
+        "-filter",
+        "0",
+        "-waitvsync",
+        "1",
+        "-syncrefresh",
+        "0",
+        "-unevenstretch",
+        "0",
+        "-autostretchxy",
+        "0"
+      ]
+    },
+    "crt": {
+      "label": "CRT",
+      "mameArgs": [
+        "-video",
+        "auto",
+        "-filter",
+        "1",
+        "-waitvsync",
+        "1",
+        "-syncrefresh",
+        "1",
+        "-prescale",
+        "2"
+      ]
+    }
+  },
+  "defaultVideoProfile": "medium",
+  "loadingScreen": {
+    "enabled": true,
+    "minimumDisplayMs": 900
+  },
+  "artwork": {
+    "screenshotsDir": "screenshots",
+    "artworkDir": "artwork",
+    "extensions": [
+      ".png",
+      ".jpg",
+      ".jpeg",
+      ".webp"
+    ]
+  },
+  "statsFile": "config/play-stats.json",
+  "librarySections": {
+    "continueLimit": 8,
+    "mostPlayedLimit": 10
+  },
+  "screenshotOrganizer": {
+    "enabled": true,
+    "sourceDir": "screenshots",
+    "artworkDir": "artwork",
+    "copyLatestToArtwork": true
+  },
+  "saveStates": {
+    "enabled": true,
+    "directory": "states",
+    "slots": 10,
+    "autosaveSlot": "auto",
+    "autoResume": true,
+    "autoSaveOnExit": true,
+    "metadataFile": "config/save-states.json",
+    "backupDir": "backups/states",
+    "backupBeforeDelete": true,
+    "backupBeforeOverwrite": true,
+    "warnOnCoreMismatch": true,
+    "exportDir": "exports",
+    "backupRetentionPerSlot": 5,
+    "minValidStateBytes": 128,
+    "integrityCheck": true
+  },
+  "diagnostics": {
+    "enabled": true,
+    "logFile": "logs/neo-arcade.log",
+    "maxLogBytes": 1048576,
+    "keepLaunchHistory": 50,
+    "auditReportFile": "logs/library-audit.json"
+  },
+  "launchRecovery": {
+    "enabled": true,
+    "fallbackOrder": [
+      "fbneo",
+      "mame",
+      "mame2003plus"
+    ],
+    "preflight": true,
+    "allowUnknownRomWithMame": true
+  },
+  "compatibilityProfiles": {
+    "enabled": true,
+    "file": "config/compatibility-profiles.json",
+    "rememberWorkingCore": true,
+    "blacklistFailedCore": true
+  },
+  "libraryCache": {
+    "enabled": true,
+    "file": "database/library-cache.json",
+    "reuseZipInspection": true,
+    "reuseSha1": true,
+    "incrementalScan": true
+  },
+  "libraryUi": {
+    "pageSize": 60,
+    "maxPageSize": 200,
+    "enableFacets": true
+  },
+  "firstRun": {
+    "enabled": true,
+    "stateFile": "config/first-run.json"
+  }
+}

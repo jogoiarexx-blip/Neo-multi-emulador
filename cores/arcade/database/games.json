@@ -1,0 +1,191 @@
+{
+  "mslug": {
+    "title": "Metal Slug",
+    "year": 1996,
+    "manufacturer": "Nazca / SNK",
+    "hardware": "Neo Geo",
+    "genre": "Run and Gun",
+    "players": 2,
+    "recommendedCore": "fbneo"
+  },
+  "mslug2": {
+    "title": "Metal Slug 2",
+    "year": 1998,
+    "manufacturer": "SNK",
+    "hardware": "Neo Geo",
+    "genre": "Run and Gun",
+    "players": 2,
+    "recommendedCore": "fbneo"
+  },
+  "mslugx": {
+    "title": "Metal Slug X",
+    "year": 1999,
+    "manufacturer": "SNK",
+    "hardware": "Neo Geo",
+    "genre": "Run and Gun",
+    "players": 2,
+    "recommendedCore": "fbneo"
+  },
+  "mslug3": {
+    "title": "Metal Slug 3",
+    "year": 2000,
+    "manufacturer": "SNK",
+    "hardware": "Neo Geo",
+    "genre": "Run and Gun",
+    "players": 2,
+    "recommendedCore": "fbneo"
+  },
+  "kof98": {
+    "title": "The King of Fighters '98",
+    "year": 1998,
+    "manufacturer": "SNK",
+    "hardware": "Neo Geo",
+    "genre": "Fighting",
+    "players": 2,
+    "recommendedCore": "fbneo"
+  },
+  "sf2": {
+    "title": "Street Fighter II",
+    "year": 1991,
+    "manufacturer": "Capcom",
+    "hardware": "CPS-1",
+    "genre": "Fighting",
+    "players": 2,
+    "recommendedCore": "fbneo"
+  },
+  "ffight": {
+    "title": "Final Fight",
+    "year": 1989,
+    "manufacturer": "Capcom",
+    "hardware": "CPS-1",
+    "genre": "Beat 'em up",
+    "players": 2,
+    "recommendedCore": "fbneo"
+  },
+  "avsp": {
+    "title": "Alien vs. Predator",
+    "year": 1994,
+    "manufacturer": "Capcom",
+    "hardware": "CPS-2",
+    "genre": "Beat 'em up",
+    "players": 3,
+    "recommendedCore": "fbneo"
+  },
+  "dino": {
+    "title": "Cadillacs and Dinosaurs",
+    "year": 1993,
+    "manufacturer": "Capcom",
+    "hardware": "CPS-1",
+    "genre": "Beat 'em up",
+    "players": 3,
+    "recommendedCore": "fbneo"
+  },
+  "outrun": {
+    "title": "Out Run",
+    "year": 1986,
+    "manufacturer": "Sega",
+    "hardware": "Sega OutRun",
+    "genre": "Racing",
+    "players": 1,
+    "recommendedCore": "mame"
+  },
+  "1944": {
+    "title": "1944: The Loop Master",
+    "year": 2000,
+    "manufacturer": "Capcom / Eighting",
+    "hardware": "CPS-2",
+    "genre": "Shoot 'em up",
+    "players": 2,
+    "recommendedCore": "fbneo"
+  },
+  "samsho": {
+    "title": "Samurai Shodown",
+    "year": 1993,
+    "manufacturer": "SNK",
+    "hardware": "Neo Geo",
+    "genre": "Fighting",
+    "players": 2,
+    "recommendedCore": "fbneo"
+  },
+  "garou": {
+    "title": "Garou: Mark of the Wolves",
+    "year": 1999,
+    "manufacturer": "SNK",
+    "hardware": "Neo Geo",
+    "genre": "Fighting",
+    "players": 2,
+    "recommendedCore": "fbneo"
+  },
+  "mvsc": {
+    "title": "Marvel vs. Capcom",
+    "year": 1998,
+    "manufacturer": "Capcom",
+    "hardware": "CPS-2",
+    "genre": "Fighting",
+    "players": 2,
+    "recommendedCore": "fbneo"
+  },
+  "ddtod": {
+    "title": "Dungeons & Dragons: Tower of Doom",
+    "year": 1993,
+    "manufacturer": "Capcom",
+    "hardware": "CPS-2",
+    "genre": "Beat 'em up",
+    "players": 4,
+    "recommendedCore": "fbneo"
+  },
+  "ddsom": {
+    "title": "Dungeons & Dragons: Shadow over Mystara",
+    "year": 1996,
+    "manufacturer": "Capcom",
+    "hardware": "CPS-2",
+    "genre": "Beat 'em up",
+    "players": 4,
+    "recommendedCore": "fbneo"
+  },
+  "punisher": {
+    "title": "The Punisher",
+    "year": 1993,
+    "manufacturer": "Capcom",
+    "hardware": "CPS-1",
+    "genre": "Beat 'em up",
+    "players": 2,
+    "recommendedCore": "fbneo"
+  },
+  "ssf2t": {
+    "title": "Super Street Fighter II Turbo",
+    "year": 1994,
+    "manufacturer": "Capcom",
+    "hardware": "CPS-2",
+    "genre": "Fighting",
+    "players": 2,
+    "recommendedCore": "fbneo"
+  },
+  "dkong": {
+    "title": "Donkey Kong",
+    "year": 1981,
+    "manufacturer": "Nintendo",
+    "hardware": "Nintendo Radar Scope",
+    "genre": "Platform",
+    "players": 2,
+    "recommendedCore": "mame"
+  },
+  "pacman": {
+    "title": "Pac-Man",
+    "year": 1980,
+    "manufacturer": "Namco",
+    "hardware": "Namco Pac-Man",
+    "genre": "Maze",
+    "players": 2,
+    "recommendedCore": "mame"
+  },
+  "galaga": {
+    "title": "Galaga",
+    "year": 1981,
+    "manufacturer": "Namco",
+    "hardware": "Namco Galaga",
+    "genre": "Shoot 'em up",
+    "players": 2,
+    "recommendedCore": "mame"
+  }
+}

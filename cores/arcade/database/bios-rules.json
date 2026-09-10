@@ -1,0 +1,20 @@
+{
+  "neogeo": {
+    "label": "Neo Geo BIOS",
+    "hardwareContains": [
+      "Neo Geo"
+    ],
+    "acceptedFiles": [
+      "neogeo.zip"
+    ]
+  },
+  "pgm": {
+    "label": "IGS PGM BIOS",
+    "hardwareContains": [
+      "PGM"
+    ],
+    "acceptedFiles": [
+      "pgm.zip"
+    ]
+  }
+}

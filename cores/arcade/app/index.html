@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NEO ARCADE</title><link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="/shared/core-embed.css?v=0.1.6">
+</head>
+<body>
+<div id="app">
+<header>
+  <div><div class="brand">NEO <span>ARCADE</span></div><div class="version">v0.2.9</div></div>
+  <div class="actions"><input id="search" placeholder="Pesquisar jogos..."><button id="refresh">↻</button></div>
+</header>
+
+<main>
+<aside>
+  <button class="nav active" data-filter="all">🕹 Todos</button>
+  <button class="nav" data-filter="favorites">★ Favoritos</button>
+  <button class="nav" data-filter="recent">◷ Recentes</button>
+  <button class="nav" data-filter="continue">▶ Continuar jogando</button>
+  <button class="nav" data-filter="mostplayed">🏆 Mais jogados</button>
+  <button class="nav" data-filter="unknown">? Não identificados</button>
+  <button class="nav" data-filter="duplicates">⧉ Duplicados</button>
+  <button class="nav" data-filter="problems">⚠ Com problemas</button>
+  <div class="sep"></div>
+  <button class="nav" data-filter="Fighting">🥊 Luta</button>
+  <button class="nav" data-filter="Beat 'em up">👊 Beat 'em up</button>
+  <button class="nav" data-filter="Shoot 'em up">🚀 Shoot 'em up</button>
+  <button class="nav" data-filter="Racing">🏁 Corrida</button>
+  <div class="sep"></div>
+  <button class="nav" id="controlsBtn">🎮 Controles</button>
+  <button class="nav" id="cabinetBtn">🕹 Modo Gabinete</button>
+  <button class="nav" id="videoBtn">🖥 Gráficos</button>
+  <button class="nav" id="auditBtn">🧪 Diagnóstico</button>
+  <div class="status" id="coreStatus"></div>
+</aside>
+
+<section class="content">
+  <div class="hero"><h1>INSERT COIN</h1><p>Biblioteca inteligente com identificação local + índice MAME importado.</p><div id="mameImportStatus" class="mameimport"></div></div>
+  <div id="scanStats" class="scanstats"></div><div class="facetbar">
+<select id="filterHardware"><option value="">Todos hardwares</option></select>
+<select id="filterManufacturer"><option value="">Todos fabricantes</option></select>
+<select id="filterYear"><option value="">Todos anos</option></select>
+</div><div class="toolbar"><span id="count">0 jogos</span><div><button id="organizeShots" class="secondary">📸 Organizar screenshots</button> <button id="clearCache" class="secondary">🧹 Limpar cache</button> <select id="sort"><option value="title">Título</option><option value="year">Ano</option><option value="manufacturer">Fabricante</option><option value="played">Mais jogados</option></select></div></div>
+  <div id="grid" class="grid"></div><div class="pager"><button id="prevPage" class="secondary">← Anterior</button><span id="pageInfo">1 / 1</span><button id="nextPage" class="secondary">Próxima →</button></div>
+  <div id="empty" class="empty hidden"><h2>Nenhuma ROM encontrada</h2><p>Copie arquivos .zip, .7z ou .chd para a pasta <b>roms</b>.</p></div>
+</section>
+</main>
+</div>
+
+<div id="modal" class="modal hidden"><div class="panel">
+<button id="close" class="close">×</button>
+<div id="details"></div>
+</div></div>
+
+<div id="toast" class="toast hidden"></div>
+<script src="js/app.js"></script>
+  <script src="/shared/core-bridge.js?v=0.1.6"></script>
+  <script src="/shared/adapters/arcade.js?v=0.1.6"></script>
+</body></html>
+<div id="controlsModal" class="modal hidden"><div class="panel controls-panel"><button id="controlsClose" class="close">×</button><div id="controlsContent"></div></div></div>
+
+<div id="videoModal" class="modal hidden"><div class="panel"><button id="videoClose" class="close">×</button><div id="videoContent"></div></div></div>
+<div id="loadingOverlay" class="loading-overlay hidden">
+  <div class="loaderbox">
+    <div class="loaderlogo">NEO <span>ARCADE</span></div>
+    <div id="loadingGame">Preparando jogo...</div>
+    <div class="bar"><div id="loadingBar"></div></div>
+    <div id="loadingStep">Inicializando...</div>
+  </div>
+</div>
+
+<div id="statesModal" class="modal hidden"><div class="panel"><button id="statesClose" class="close">×</button><div id="statesContent"></div></div></div>
+
+<div id="auditModal" class="modal hidden"><div class="panel controls-panel"><button id="auditClose" class="close">×</button><div id="auditContent"></div></div></div>
+
+<div id="setupModal" class="modal hidden"><div class="panel controls-panel"><button id="setupClose" class="close">×</button><div id="setupContent"></div></div></div>

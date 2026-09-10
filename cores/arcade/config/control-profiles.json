@@ -1,0 +1,98 @@
+{
+  "profiles": {
+    "arcade-default": {
+      "label": "Arcade Padrão",
+      "players": {
+        "1": {
+          "coin": "5",
+          "start": "1",
+          "up": "ArrowUp",
+          "down": "ArrowDown",
+          "left": "ArrowLeft",
+          "right": "ArrowRight",
+          "b1": "KeyZ",
+          "b2": "KeyX",
+          "b3": "KeyC",
+          "b4": "KeyA",
+          "b5": "KeyS",
+          "b6": "KeyD"
+        },
+        "2": {
+          "coin": "6",
+          "start": "2",
+          "up": "KeyW",
+          "down": "KeyS",
+          "left": "KeyA",
+          "right": "KeyD",
+          "b1": "KeyF",
+          "b2": "KeyG",
+          "b3": "KeyH",
+          "b4": "KeyR",
+          "b5": "KeyT",
+          "b6": "KeyY"
+        }
+      }
+    }
+  },
+  "gameOverrides": {},
+  "hotkeys": {
+    "pause": "KeyP",
+    "exit": "Escape",
+    "saveState": "F5",
+    "loadState": "F8"
+  },
+  "devicePresets": {
+    "xbox": {
+      "label": "Xbox / XInput",
+      "mapping": {
+        "up": "AXIS_1_NEG",
+        "down": "AXIS_1_POS",
+        "left": "AXIS_0_NEG",
+        "right": "AXIS_0_POS",
+        "b1": "BUTTON_0",
+        "b2": "BUTTON_1",
+        "b3": "BUTTON_2",
+        "b4": "BUTTON_3",
+        "b5": "BUTTON_4",
+        "b6": "BUTTON_5",
+        "start": "BUTTON_9",
+        "coin": "BUTTON_8"
+      }
+    },
+    "playstation": {
+      "label": "PlayStation",
+      "mapping": {
+        "up": "AXIS_1_NEG",
+        "down": "AXIS_1_POS",
+        "left": "AXIS_0_NEG",
+        "right": "AXIS_0_POS",
+        "b1": "BUTTON_1",
+        "b2": "BUTTON_2",
+        "b3": "BUTTON_0",
+        "b4": "BUTTON_3",
+        "b5": "BUTTON_4",
+        "b6": "BUTTON_5",
+        "start": "BUTTON_9",
+        "coin": "BUTTON_8"
+      }
+    },
+    "arcade-stick": {
+      "label": "Arcade Stick Genérico",
+      "mapping": {
+        "up": "AXIS_1_NEG",
+        "down": "AXIS_1_POS",
+        "left": "AXIS_0_NEG",
+        "right": "AXIS_0_POS",
+        "b1": "BUTTON_0",
+        "b2": "BUTTON_1",
+        "b3": "BUTTON_2",
+        "b4": "BUTTON_3",
+        "b5": "BUTTON_4",
+        "b6": "BUTTON_5",
+        "start": "BUTTON_7",
+        "coin": "BUTTON_6"
+      }
+    }
+  },
+  "gamepadAssignments": {}
+}
