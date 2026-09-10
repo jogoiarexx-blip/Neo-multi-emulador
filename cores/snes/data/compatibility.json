@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "games": {
+    "09E85EA6": {
+      "title": "DOOM",
+      "sha1": "736B9B994F506DE0893CEB181F942739DA089B05",
+      "recommendedCore": "bsnes",
+      "fallbackCore": "snes9x",
+      "profile": "accuracy",
+      "chip": "Super FX",
+      "aspect": "4-3",
+      "filter": "crt",
+      "notes": "Jogo com coprocessador Super FX; bsnes é indicado em hardware forte."
+    },
+    "4CAB21DB": {
+      "title": "Final Fight",
+      "sha1": "6CA2AC5916B3201D90F88612D28006CFFEDDE03D",
+      "recommendedCore": "snes9x",
+      "fallbackCore": "snes9x",
+      "profile": "balanced",
+      "chip": "None",
+      "aspect": "4-3",
+      "filter": "pixel",
+      "notes": "Não exige coprocessador especial; Snes9x oferece ótimo desempenho."
+    },
+    "8E6F0065": {
+      "title": "Final Fight 3",
+      "sha1": "A88AFD142CE4683DF2A5B2B1A06EAEA698E114F9",
+      "recommendedCore": "snes9x",
+      "fallbackCore": "snes9x",
+      "profile": "balanced",
+      "chip": "None",
+      "aspect": "4-3",
+      "filter": "pixel",
+      "notes": "ROM integrada enviada pelo usuário. Não exige coprocessador especial; Snes9x é o padrão recomendado."
+    }
+  }
+}

@@ -1,0 +1,1 @@
+self.window=self;self.SNESNova={};importScripts('../../modules/patches.js');self.onmessage=async e=>{const {id,rom,patch}=e.data||{};try{const f=await self.SNESNova.patches.patchFile(rom,patch);postMessage({id,ok:true,file:f,meta:f.__snesnovaPatch||null})}catch(err){postMessage({id,ok:false,error:String(err?.message||err)})}};

@@ -1,0 +1,5 @@
+(()=>{'use strict';const N=window.SNESNova=window.SNESNova||{};
+function maxIntegerScale(baseW=256,baseH=224){const w=Math.max(1,innerWidth-40),h=Math.max(1,innerHeight-180);return Math.max(1,Math.floor(Math.min(w/baseW,h/baseH)))}
+function applyAutoScale(){const stage=document.querySelector('#playerStage');if(!stage)return;const s=maxIntegerScale();stage.style.setProperty('--sn-auto-scale',String(s));stage.dataset.integerScale=String(s);window.dispatchEvent(new CustomEvent('snesnova:integerscale',{detail:{scale:s}}))}
+function tuneCanvas(){const c=document.querySelector('#game canvas');if(!c)return;const pref=JSON.parse(localStorage.getItem('snes-nova:prefs:v1')||'{}');if(pref.sharp!==false)c.style.imageRendering='pixelated';c.style.transform='translateZ(0)';c.style.backfaceVisibility='hidden'}
+addEventListener('resize',applyAutoScale,{passive:true});addEventListener('snesnova:sessionstart',()=>setTimeout(()=>{applyAutoScale();tuneCanvas()},300));N.videoEngine={maxIntegerScale,applyAutoScale,tuneCanvas};})();

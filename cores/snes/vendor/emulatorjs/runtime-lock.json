@@ -1,0 +1,13 @@
+{
+  "snes9x": {
+    "runtime": "EmulatorJS 4.2.3",
+    "source": "https://cdn.emulatorjs.org/4.2.3/data/",
+    "pinned": true
+  },
+  "bsnes": {
+    "runtime": "EmulatorJS 4.3.0-pre",
+    "source": "https://cdn.emulatorjs.org/4.3.0-pre/data/",
+    "pinned": true,
+    "releaseCommit": "5628818"
+  }
+}

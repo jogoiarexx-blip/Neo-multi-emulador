@@ -1,0 +1,27 @@
+{
+  "version": "1.5.0",
+  "games": [
+    {
+      "id": "doom-1995",
+      "title": "Doom",
+      "file": "./games/doom-1995.sfc",
+      "size": 2097152,
+      "core": "bsnes"
+    },
+    {
+      "id": "final-fight",
+      "title": "Final Fight",
+      "file": "./games/final-fight.sfc",
+      "size": 1048576,
+      "core": "snes9x"
+    },
+    {
+      "id": "final-fight-3",
+      "title": "Final Fight 3",
+      "file": "./games/final-fight-3.sfc",
+      "size": 3145728,
+      "core": "snes9x",
+      "crc32": "8E6F0065"
+    }
+  ]
+}

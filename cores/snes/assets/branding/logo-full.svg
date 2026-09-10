@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 180" fill="none">
+  <defs>
+    <linearGradient id="g" x1="28" y1="18" x2="162" y2="162" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7A5CFF"/>
+      <stop offset="1" stop-color="#30D5FF"/>
+    </linearGradient>
+    <linearGradient id="t" x1="210" y1="44" x2="640" y2="140" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#D7E6FF"/>
+    </linearGradient>
+  </defs>
+  <rect width="760" height="180" rx="36" fill="none"/>
+  <g>
+    <rect x="10" y="10" width="160" height="160" rx="42" fill="#0B1020"/>
+    <rect x="22" y="22" width="136" height="136" rx="36" fill="url(#g)"/>
+    <rect x="32" y="32" width="116" height="116" rx="28" fill="#0D1326" fill-opacity="0.72"/>
+    <path d="M54 56h18l36 46V56h18v72h-16l-38-49v49H54V56Z" fill="#F5F8FF"/>
+    <circle cx="123" cy="72" r="7" fill="#49D6FF"/>
+    <circle cx="132" cy="87" r="7" fill="#7C67FF"/>
+    <circle cx="114" cy="87" r="7" fill="#FF6C84"/>
+    <circle cx="123" cy="102" r="7" fill="#50DC9D"/>
+  </g>
+  <g fill="url(#t)">
+    <text x="198" y="90" font-size="58" font-weight="800" font-family="Inter,Segoe UI,Arial,sans-serif" letter-spacing="1">SNES NOVA</text>
+  </g>
+  <text x="201" y="122" font-size="18" font-weight="600" font-family="Inter,Segoe UI,Arial,sans-serif" fill="#87A1C8" letter-spacing="3">ENGINE V1 • SMART PERFORMANCE • 16-BIT</text>
+</svg>

@@ -1,0 +1,1 @@
+self.window=self;self.SNESNova={};importScripts('../../modules/zip-reader.js');self.onmessage=async e=>{const {id,file,index=0}=e.data||{};try{const f=await self.SNESNova.zipReader.extractRom(file,index);postMessage({id,ok:true,file:f})}catch(err){postMessage({id,ok:false,error:String(err?.message||err)})}};

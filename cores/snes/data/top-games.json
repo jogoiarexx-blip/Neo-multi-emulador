@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "sourceNote": "Seleção de clássicos altamente avaliados; ROMs comerciais não são distribuídas.",
+  "games": [
+    {
+      "rank": 1,
+      "id": "super-mario-world",
+      "title": "Super Mario World",
+      "year": 1991,
+      "genre": "Plataforma",
+      "players": 2,
+      "recommendedCore": "snes9x"
+    },
+    {
+      "rank": 2,
+      "id": "zelda-link-to-the-past",
+      "title": "The Legend of Zelda: A Link to the Past",
+      "year": 1992,
+      "genre": "Ação/Aventura",
+      "players": 1,
+      "recommendedCore": "snes9x"
+    },
+    {
+      "rank": 3,
+      "id": "super-metroid",
+      "title": "Super Metroid",
+      "year": 1994,
+      "genre": "Ação/Aventura",
+      "players": 1,
+      "recommendedCore": "snes9x"
+    },
+    {
+      "rank": 4,
+      "id": "chrono-trigger",
+      "title": "Chrono Trigger",
+      "year": 1995,
+      "genre": "RPG",
+      "players": 1,
+      "recommendedCore": "snes9x"
+    },
+    {
+      "rank": 5,
+      "id": "final-fantasy-vi",
+      "title": "Final Fantasy VI / III",
+      "year": 1994,
+      "genre": "RPG",
+      "players": 1,
+      "recommendedCore": "snes9x"
+    },
+    {
+      "rank": 6,
+      "id": "yoshis-island",
+      "title": "Super Mario World 2: Yoshi's Island",
+      "year": 1995,
+      "genre": "Plataforma",
+      "players": 1,
+      "recommendedCore": "bsnes",
+      "chip": "Super FX 2"
+    },
+    {
+      "rank": 7,
+      "id": "earthbound",
+      "title": "EarthBound",
+      "year": 1995,
+      "genre": "RPG",
+      "players": 1,
+      "recommendedCore": "snes9x"
+    },
+    {
+      "rank": 8,
+      "id": "super-mario-rpg",
+      "title": "Super Mario RPG",
+      "year": 1996,
+      "genre": "RPG",
+      "players": 1,
+      "recommendedCore": "bsnes",
+      "chip": "SA-1"
+    },
+    {
+      "rank": 9,
+      "id": "donkey-kong-country-2",
+      "title": "Donkey Kong Country 2",
+      "year": 1995,
+      "genre": "Plataforma",
+      "players": 2,
+      "recommendedCore": "snes9x"
+    },
+    {
+      "rank": 10,
+      "id": "super-mario-all-stars",
+      "title": "Super Mario All-Stars",
+      "year": 1993,
+      "genre": "Plataforma",
+      "players": 2,
+      "recommendedCore": "snes9x"
+    }
+  ]
+}

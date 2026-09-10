@@ -1,0 +1,316 @@
+{
+  "version": "1.0",
+  "rarities": {
+    "common": {
+      "label": "Comum",
+      "xp": 25
+    },
+    "rare": {
+      "label": "Rara",
+      "xp": 50
+    },
+    "epic": {
+      "label": "Épica",
+      "xp": 100
+    },
+    "legendary": {
+      "label": "Lendária",
+      "xp": 200
+    }
+  },
+  "global": [
+    {
+      "id": "first_game",
+      "title": "Primeiro Cartucho",
+      "description": "Inicie sua primeira sessão no SNES Nova.",
+      "rarity": "common",
+      "metric": "sessions",
+      "target": 1,
+      "icon": "🎮"
+    },
+    {
+      "id": "five_sessions",
+      "title": "Aquecendo os Controles",
+      "description": "Complete 5 sessões de jogo.",
+      "rarity": "rare",
+      "metric": "sessions",
+      "target": 5,
+      "icon": "🕹️"
+    },
+    {
+      "id": "ten_sessions",
+      "title": "Jogador Frequente",
+      "description": "Complete 10 sessões de jogo.",
+      "rarity": "epic",
+      "metric": "sessions",
+      "target": 10,
+      "icon": "⭐"
+    },
+    {
+      "id": "thirty_minutes",
+      "title": "Meia Hora 16-bit",
+      "description": "Acumule 30 minutos jogados.",
+      "rarity": "rare",
+      "metric": "totalTime",
+      "target": 1800000,
+      "format": "time",
+      "icon": "⏱️"
+    },
+    {
+      "id": "five_hours",
+      "title": "Veterano 16-bit",
+      "description": "Acumule 5 horas jogadas.",
+      "rarity": "legendary",
+      "metric": "totalTime",
+      "target": 18000000,
+      "format": "time",
+      "icon": "🏆"
+    },
+    {
+      "id": "first_save",
+      "title": "Seguro na Memória",
+      "description": "Crie seu primeiro Save State.",
+      "rarity": "common",
+      "metric": "saveStates",
+      "target": 1,
+      "icon": "💾"
+    },
+    {
+      "id": "ten_saves",
+      "title": "Mestre dos Estados",
+      "description": "Crie 10 Save States.",
+      "rarity": "rare",
+      "metric": "saveStates",
+      "target": 10,
+      "icon": "📦"
+    },
+    {
+      "id": "first_load",
+      "title": "De Volta à Ação",
+      "description": "Carregue um Save State.",
+      "rarity": "common",
+      "metric": "loadStates",
+      "target": 1,
+      "icon": "↩️"
+    },
+    {
+      "id": "gamepad",
+      "title": "Controle na Mão",
+      "description": "Jogue usando um gamepad.",
+      "rarity": "common",
+      "metric": "gamepadUses",
+      "target": 1,
+      "icon": "🎮"
+    },
+    {
+      "id": "fullscreen",
+      "title": "Tela Grande",
+      "description": "Entre em tela cheia durante uma sessão.",
+      "rarity": "common",
+      "metric": "fullscreenUses",
+      "target": 1,
+      "icon": "🖥️"
+    },
+    {
+      "id": "tv_mode",
+      "title": "Console da Sala",
+      "description": "Ative o Modo TV.",
+      "rarity": "rare",
+      "metric": "tvModeUses",
+      "target": 1,
+      "icon": "📺"
+    },
+    {
+      "id": "snes9x",
+      "title": "Velocidade Clássica",
+      "description": "Inicie uma sessão com Snes9x.",
+      "rarity": "common",
+      "metric": "coreSessions.snes9x",
+      "target": 1,
+      "icon": "⚡"
+    },
+    {
+      "id": "bsnes",
+      "title": "Precisão Máxima",
+      "description": "Inicie uma sessão com bsnes.",
+      "rarity": "rare",
+      "metric": "coreSessions.bsnes",
+      "target": 1,
+      "icon": "🎯"
+    },
+    {
+      "id": "both_cores",
+      "title": "Dois Mundos",
+      "description": "Jogue usando Snes9x e bsnes.",
+      "rarity": "epic",
+      "metric": "distinctCores",
+      "target": 2,
+      "icon": "🔄"
+    },
+    {
+      "id": "three_games",
+      "title": "Mini Coleção",
+      "description": "Jogue 3 jogos diferentes.",
+      "rarity": "epic",
+      "metric": "distinctGames",
+      "target": 3,
+      "icon": "📚"
+    }
+  ],
+  "games": {
+    "doom": [
+      {
+        "id": "doom_first",
+        "title": "Entrada no Inferno",
+        "description": "Inicie Doom pela primeira vez.",
+        "rarity": "common",
+        "metric": "sessions",
+        "target": 1,
+        "icon": "🔥"
+      },
+      {
+        "id": "doom_30m",
+        "title": "Marine Persistente",
+        "description": "Jogue Doom por 30 minutos no total.",
+        "rarity": "rare",
+        "metric": "time",
+        "target": 1800000,
+        "format": "time",
+        "icon": "⏱️"
+      },
+      {
+        "id": "doom_3_sessions",
+        "title": "Retorno a Marte",
+        "description": "Inicie Doom em 3 sessões diferentes.",
+        "rarity": "rare",
+        "metric": "sessions",
+        "target": 3,
+        "icon": "🚪"
+      },
+      {
+        "id": "doom_bsnes",
+        "title": "Precisão Infernal",
+        "description": "Inicie Doom usando bsnes.",
+        "rarity": "epic",
+        "metric": "coreSessions.bsnes",
+        "target": 1,
+        "icon": "🎯"
+      },
+      {
+        "id": "doom_5_saves",
+        "title": "Sobrevivente",
+        "description": "Crie 5 Save States em Doom.",
+        "rarity": "epic",
+        "metric": "saveStates",
+        "target": 5,
+        "icon": "💾"
+      }
+    ],
+    "final-fight": [
+      {
+        "id": "ff_first",
+        "title": "Primeira Briga",
+        "description": "Inicie Final Fight pela primeira vez.",
+        "rarity": "common",
+        "metric": "sessions",
+        "target": 1,
+        "icon": "👊"
+      },
+      {
+        "id": "ff_30m",
+        "title": "Ruas de Metro City",
+        "description": "Jogue Final Fight por 30 minutos no total.",
+        "rarity": "rare",
+        "metric": "time",
+        "target": 1800000,
+        "format": "time",
+        "icon": "🌆"
+      },
+      {
+        "id": "ff_5_sessions",
+        "title": "Veterano de Metro City",
+        "description": "Complete 5 sessões de Final Fight.",
+        "rarity": "epic",
+        "metric": "sessions",
+        "target": 5,
+        "icon": "🥊"
+      },
+      {
+        "id": "ff_save",
+        "title": "Pausa Estratégica",
+        "description": "Crie um Save State em Final Fight.",
+        "rarity": "common",
+        "metric": "saveStates",
+        "target": 1,
+        "icon": "💾"
+      },
+      {
+        "id": "ff_snes9x",
+        "title": "Combate Fluido",
+        "description": "Inicie Final Fight usando Snes9x.",
+        "rarity": "rare",
+        "metric": "coreSessions.snes9x",
+        "target": 1,
+        "icon": "⚡"
+      }
+    ],
+    "final-fight-3": [
+      {
+        "id": "ff3_first",
+        "title": "Nova Geração",
+        "description": "Inicie Final Fight 3 pela primeira vez.",
+        "rarity": "common",
+        "metric": "sessions",
+        "target": 1,
+        "icon": "👊"
+      },
+      {
+        "id": "ff3_30m",
+        "title": "Patrulha nas Ruas",
+        "description": "Jogue Final Fight 3 por 30 minutos no total.",
+        "rarity": "rare",
+        "metric": "time",
+        "target": 1800000,
+        "format": "time",
+        "icon": "🛣️"
+      },
+      {
+        "id": "ff3_5_sessions",
+        "title": "Especialista em Final Fight 3",
+        "description": "Complete 5 sessões de Final Fight 3.",
+        "rarity": "epic",
+        "metric": "sessions",
+        "target": 5,
+        "icon": "🥋"
+      },
+      {
+        "id": "ff3_save",
+        "title": "Checkpoint Urbano",
+        "description": "Crie um Save State em Final Fight 3.",
+        "rarity": "common",
+        "metric": "saveStates",
+        "target": 1,
+        "icon": "💾"
+      },
+      {
+        "id": "ff3_snes9x",
+        "title": "Ação Otimizada",
+        "description": "Inicie Final Fight 3 usando Snes9x.",
+        "rarity": "rare",
+        "metric": "coreSessions.snes9x",
+        "target": 1,
+        "icon": "⚡"
+      }
+    ]
+  },
+  "memoryRuleSchema": {
+    "description": "Infraestrutura reservada para futuras conquistas por leitura de memória. Nenhum endereço é inventado nesta versão.",
+    "fields": [
+      "address",
+      "operator",
+      "value",
+      "size",
+      "domain"
+    ]
+  }
+}

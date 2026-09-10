@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" fill="none">
+    <defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#170f13"/><stop offset="0.58" stop-color="#7a2e1c"/><stop offset="1" stop-color="#ff9b62"/></linearGradient><radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="translate(600 110) rotate(130) scale(250 220)" gradientUnits="userSpaceOnUse"><stop stop-color="#ff9b62" stop-opacity="0.92"/><stop offset="1" stop-color="#ff9b62" stop-opacity="0"/></radialGradient></defs>
+    <rect width="800" height="520" rx="42" fill="url(#bg)"/>
+    <rect x="26" y="26" width="748" height="468" rx="30" fill="#08101c" fill-opacity="0.34"/>
+    <circle cx="618" cy="122" r="156" fill="url(#glow)"/>
+    <path d="M70 370c85-130 176-193 274-189 57 2 94 22 153 69 38 30 91 52 162 68v102H70V370Z" fill="rgba(5,7,13,.38)"/>
+    <text x="64" y="116" fill="#A6C7FF" font-size="22" font-weight="800" font-family="Arial,sans-serif" letter-spacing="5">SNES NOVA COLLECTION</text>
+    <text x="64" y="238" fill="#FFFFFF" font-size="72" font-weight="900" font-family="Arial,sans-serif">DOOM</text>
+    <text x="68" y="282" fill="#E2EAFF" fill-opacity="0.88" font-size="22" font-weight="600" font-family="Arial,sans-serif">Super FX • Williams • 1995</text>
+    <g opacity="0.92"><circle cx="633" cy="306" r="28" fill="#4ED8FF"/><circle cx="673" cy="348" r="28" fill="#7A5CFF"/><circle cx="593" cy="348" r="28" fill="#FF6C84"/><circle cx="633" cy="389" r="28" fill="#50DC9D"/></g>
+    <rect x="64" y="322" width="172" height="34" rx="17" fill="rgba(255,255,255,.10)"/>
+    <text x="85" y="345" fill="#F4F8FF" font-size="17" font-weight="800" font-family="Arial,sans-serif" letter-spacing="2">PLAY READY</text>
+    </svg>
