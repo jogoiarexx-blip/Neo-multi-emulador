@@ -1,0 +1,4 @@
+(()=>{
+ const clickByTitle=(rx)=>{const els=[...document.querySelectorAll('button,[role="button"]')];const b=els.find(x=>rx.test((x.title||x.textContent||'').trim()));if(b){b.click();return true}return false};
+ window.NEOCoreBridge?.register({id:'gb',capabilities:()=>({pause:true,reset:true,save:true,load:true,fullscreen:true,telemetry:true}),commands:{pause:()=>clickByTitle(/pause|play|pausar|continuar/i),reset:()=>clickByTitle(/restart|reset|reiniciar/i),save:()=>clickByTitle(/save state|salvar estado/i),load:()=>clickByTitle(/load state|carregar estado/i)},telemetry:()=>({engine:'Gambatte / EmulatorJS',state:document.querySelector('#game canvas')?'Executando':'Carregando',renderer:document.querySelector('#game canvas')?'Canvas/WebGL':'Inicializando',audio:'EmulatorJS',slot:'Quick'})});
+})();

@@ -1,0 +1,1 @@
+(()=>{window.NEOCoreBridge?.register({id:'arcade',capabilities:()=>({pause:false,reset:false,save:false,load:false,fullscreen:true,telemetry:true}),commands:{},telemetry:()=>({engine:'MAME / FBNeo',state:'Runtime externo',renderer:'Runtime nativo',audio:'Runtime nativo',slot:'—'})});})();

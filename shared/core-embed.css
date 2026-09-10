@@ -1,0 +1,41 @@
+html.neo-embedded,html.neo-embedded body,body.neo-embedded{margin:0!important;width:100%!important;height:100%!important;min-height:100%!important;overflow:hidden!important;background:#03050a!important}
+/* SNES Nova: when hosted by NEO Multi, expose the runtime instead of nesting the full console UI. */
+body.neo-embedded .topbar,body.neo-embedded .console-nav,body.neo-embedded .app-footer,body.neo-embedded #launcherView,body.neo-embedded .shortcut-bar,body.neo-embedded .video-toolbar,body.neo-embedded .perf-warning{display:none!important}
+body.neo-embedded .app-shell{min-height:100%!important;height:100%!important}
+body.neo-embedded .player-console-panel:not([hidden]),body.neo-embedded #playerView:not([hidden]){position:fixed!important;inset:0!important;width:100%!important;height:100%!important;max-width:none!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:#03050a!important;box-shadow:none!important;overflow:hidden!important}
+body.neo-embedded .player-console-panel .player-head{display:none!important}
+body.neo-embedded .player-console-panel .player-stage,body.neo-embedded #playerStage{width:100%!important;max-width:none!important;height:100%!important;max-height:none!important;margin:0!important;border:0!important;border-radius:0!important;box-shadow:none!important;display:grid!important;place-items:center!important;background:#000!important}
+body.neo-embedded #game{width:100%!important;height:100%!important;display:grid!important;place-items:center!important;background:#000!important}
+/* NEO NES */
+body.neo-embedded #app{height:100%!important;min-height:100%!important;padding:0!important;display:flex!important;align-items:center!important;justify-content:center!important;background:#000!important}
+body.neo-embedded #app>header,body.neo-embedded #app>#appNav,body.neo-embedded #app>main>.toolbar,body.neo-embedded #app>main>.panel,body.neo-embedded #app>main>.card,body.neo-embedded #app>main>.log-card{display:none!important}
+body.neo-embedded #app>main{width:100%!important;height:100%!important;max-width:none!important;margin:0!important;padding:0!important;display:grid!important;place-items:center!important}
+body.neo-embedded #app .screen-wrap{display:grid!important;width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;margin:0!important;border:0!important;border-radius:0!important;place-items:center!important;background:#000!important}
+body.neo-embedded #app #screen{max-width:100%!important;max-height:100%!important;width:auto!important;height:auto!important;object-fit:contain!important}
+/* NEO GBA */
+body.neo-embedded main.app-shell{height:100%!important;max-width:none!important;margin:0!important;padding:0!important;display:grid!important;place-items:center!important;background:#000!important}
+body.neo-embedded main.app-shell>.topbar,body.neo-embedded main.app-shell>.controls,body.neo-embedded main.app-shell>.info-grid,body.neo-embedded main.app-shell>.card,body.neo-embedded main.app-shell>.log-card{display:none!important}
+body.neo-embedded main.app-shell>.screen-panel{width:100%!important;height:100%!important;margin:0!important;padding:0!important;border:0!important;display:grid!important;place-items:center!important;background:#000!important}
+body.neo-embedded main.app-shell .screen-wrap{width:100%!important;height:100%!important;max-width:none!important;display:grid!important;place-items:center!important;background:#000!important}
+body.neo-embedded main.app-shell #screen{max-width:100%!important;max-height:100%!important;width:auto!important;height:auto!important;object-fit:contain!important}
+body.neo-embedded main.app-shell .status-row{position:fixed!important;left:12px!important;bottom:10px!important;z-index:10!important;background:rgba(4,8,18,.66)!important;border:1px solid rgba(92,108,150,.3)!important;border-radius:999px!important;padding:6px 10px!important;font-size:11px!important;backdrop-filter:blur(8px)}
+/* NEO GB */
+body.neo-embedded>header{display:none!important}body.neo-embedded>main{width:100%!important;height:100%!important;max-width:none!important;margin:0!important;padding:0!important;background:#000!important}body.neo-embedded>main #game{width:100%!important;height:100%!important}body.neo-embedded>main #empty{display:none!important}
+
+
+/* v0.1.6: embedded runtime visibility hardening. Audio can start before CoreBridge handshake;
+   never let an internal boot layer or stale console overlay cover the real video surface. */
+body.neo-embedded #bootScreen,
+body.neo-embedded .boot-screen,
+body.neo-embedded .session-active::before{display:none!important;opacity:0!important;visibility:hidden!important;pointer-events:none!important}
+body.neo-embedded #playerView,
+body.neo-embedded #playerStage,
+body.neo-embedded #game{visibility:visible!important;opacity:1!important}
+body.neo-embedded #game>*,
+body.neo-embedded #game canvas,
+body.neo-embedded #game iframe,
+body.neo-embedded #game .ejs_parent,
+body.neo-embedded #game .ejs_game{visibility:visible!important;opacity:1!important;max-width:100%!important;max-height:100%!important}
+body.neo-embedded #game canvas{display:block!important;margin:auto!important;position:relative!important;z-index:2!important}
+body.neo-embedded #game iframe{display:block!important;width:100%!important;height:100%!important;border:0!important;position:relative!important;z-index:2!important}
+body.neo-embedded .player-stage::after{pointer-events:none!important}

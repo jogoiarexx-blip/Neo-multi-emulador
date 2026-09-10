@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#070812" />
+  <link rel="icon" href="/assets/brand/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/brand/neo-multi-icon-32.png" />
+  <link rel="apple-touch-icon" href="/assets/brand/neo-multi-icon-192.png" />
+  <title>NEO Multi</title>
+  <link rel="stylesheet" href="/css/hub.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><img class="brand-logo" src="/assets/brand/neo-multi-logo.webp" alt="NEO Multi" /><span class="brand-subtitle">Emulation Platform</span></div>
+      <nav>
+        <button class="nav-item active" data-view="home">⌂ <span>Início</span></button>
+        <button class="nav-item" data-view="library">▦ <span>Biblioteca</span></button>
+        <button class="nav-item" data-view="favorites">★ <span>Favoritos</span></button>
+        <button class="nav-item" data-view="cores">◫ <span>Núcleos</span></button>
+        <button class="nav-item" data-view="diagnostics">◎ <span>Diagnóstico</span></button>
+      </nav>
+      <div class="sidebar-footer"><span class="dot"></span><span>Hub v0.1.6</span></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div><h1 id="viewTitle">Central de Emulação</h1><p id="viewSubtitle">Quatro sistemas, uma interface, núcleos independentes.</p></div>
+        <div class="top-actions"><button id="backHub" hidden>← Hub</button><button id="fullscreenCore" hidden>⛶ Tela cheia</button></div>
+      </header>
+
+      <section id="homeView" class="view active">
+        <div class="hero">
+          <div><span class="eyebrow">ARQUITETURA MODULAR</span><h2>Escolha o sistema. O núcleo continua independente.</h2><p>NES, SNES, GBA e Arcade compartilham apenas a camada de navegação. Cada engine permanece em sua própria pasta, com versão, testes, assets e evolução separados.</p></div>
+          <div class="hero-stat"><strong id="coreCount">4</strong><span>núcleos instalados</span></div>
+        </div>
+        <div class="section-head"><h3>Sistemas</h3><span id="statusLine">Carregando registro...</span></div>
+        <div id="coreGrid" class="core-grid"></div>
+        <div class="section-head shortcut-head"><h3>Jogar agora</h3><button class="text-link" data-view-jump="library">Ver biblioteca completa →</button></div>
+        <div id="homeGameShortcuts" class="game-grid compact-games"></div>
+      </section>
+
+      <section id="libraryView" class="view">
+        <div class="library-toolbar panel">
+          <div><h3>Biblioteca unificada</h3><p>O NEO Multi identifica o sistema e abre o núcleo correto automaticamente.</p></div>
+          <div class="library-actions"><input id="librarySearch" type="search" placeholder="Buscar jogo..."/><select id="librarySystem"><option value="all">Todos os sistemas</option><option value="nes">NES</option><option value="snes">SNES</option><option value="gb">GB / GBC</option><option value="gba">GBA</option><option value="arcade">Arcade</option></select><button id="importGameBtn">＋ Adicionar jogo</button><input id="importGameInput" type="file" hidden accept=".nes,.sfc,.smc,.fig,.gb,.gbc,.gba,.zip,.7z,.chd"/></div>
+        </div>
+        <div class="section-head"><h3>Todos os jogos</h3><span id="libraryCount">0 jogos</span></div>
+        <div id="gameGrid" class="game-grid"></div>
+      </section>
+
+      <section id="favoritesView" class="view">
+        <div class="section-head"><h3>Favoritos</h3><span>Atalhos rápidos de qualquer sistema</span></div>
+        <div id="favoriteGrid" class="game-grid"></div>
+      </section>
+
+      <section id="coresView" class="view">
+        <div class="panel"><div class="section-head"><h3>Gerenciador de núcleos</h3><span>Contratos e versões isoladas</span></div><div id="coreTable" class="core-table"></div></div>
+      </section>
+
+      <section id="diagnosticsView" class="view">
+        <div class="diag-grid">
+          <article class="panel"><h3>Ambiente</h3><dl id="environment"></dl></article>
+          <article class="panel"><h3>Princípios da arquitetura</h3><ul><li>Uma pasta por núcleo.</li><li>Sem imports cruzados entre engines.</li><li>Hub acessa núcleos apenas pelo registro.</li><li>Arcade mantém backend local próprio.</li><li>Service Workers ficam limitados ao escopo de cada núcleo.</li></ul></article>
+        </div>
+      </section>
+
+      <section id="runnerView" class="view runner-view">
+        <div class="runner-head">
+          <div class="runner-identity"><span id="runnerBadge" class="badge"></span><div><strong id="runnerName"></strong><small id="runnerMeta"></small></div></div>
+          <div class="runner-status"><span class="runner-live-dot"></span><span id="runnerHint">Inicializando núcleo…</span></div>
+          <div class="runner-controls" aria-label="Controles rápidos do núcleo">
+            <button data-core-command="save" title="Quick Save">Salvar</button>
+            <button data-core-command="load" title="Quick Load">Carregar</button>
+            <button data-core-command="pause" title="Pausar/Continuar">Pausar</button>
+            <button data-core-command="reset" title="Reiniciar jogo">Reiniciar</button>
+            <button id="runnerFullscreen" title="Tela cheia">Tela cheia</button>
+            <button id="runnerExit" class="runner-exit" title="Voltar à biblioteca">Sair</button>
+          </div>
+        </div>
+        <div class="runner-telemetry" aria-label="Telemetria do núcleo">
+          <div><small>Núcleo</small><strong id="telemetryEngine">—</strong></div>
+          <div><small>FPS</small><strong id="telemetryFps">—</strong></div>
+          <div><small>Vídeo</small><strong id="telemetryRenderer">—</strong></div>
+          <div><small>Áudio</small><strong id="telemetryAudio">—</strong></div>
+          <div><small>Controle</small><strong id="telemetryGamepad">—</strong></div>
+          <div><small>Save</small><strong id="telemetrySlot">—</strong></div>
+          <div><small>Estado</small><strong id="telemetryState">Inicializando</strong></div>
+        </div>
+        <div class="runner-stage"><iframe id="coreFrame" title="Emulador selecionado" allow="fullscreen; gamepad; autoplay; clipboard-read; clipboard-write"></iframe><div id="runnerLoading" class="runner-loading"><div class="runner-spinner"></div><strong>Preparando jogo</strong><span>Selecionando o melhor núcleo automaticamente…</span></div></div>
+      </section>
+    </main>
+  </div>
+  <script type="module" src="/js/hub.js"></script>
+</body>
+</html>

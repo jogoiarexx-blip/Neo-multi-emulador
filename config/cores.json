@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "hubVersion": "0.1.6",
+  "cores": [
+    {
+      "id": "nes",
+      "name": "NEO NES",
+      "system": "Nintendo Entertainment System",
+      "version": "0.8.12",
+      "type": "web-native",
+      "entry": "/cores/nes/index.html",
+      "extensions": [
+        ".nes",
+        ".fds",
+        ".nsf",
+        ".nsfe",
+        ".zip"
+      ],
+      "engine": "JavaScript próprio",
+      "status": "stable",
+      "capabilities": [
+        "save-state",
+        "rewind",
+        "webgl2",
+        "debugger",
+        "fds",
+        "nsf",
+        "gamepad"
+      ]
+    },
+    {
+      "id": "snes",
+      "name": "SNES Nova",
+      "system": "Super Nintendo",
+      "version": "1.5.0",
+      "type": "web-runtime",
+      "entry": "/cores/snes/index.html",
+      "extensions": [
+        ".sfc",
+        ".smc",
+        ".fig",
+        ".zip"
+      ],
+      "engine": "EmulatorJS + Snes9x/bsnes",
+      "status": "stable",
+      "capabilities": [
+        "multi-core",
+        "save-state",
+        "webgl2",
+        "workers",
+        "gamepad",
+        "achievements"
+      ]
+    },
+    {
+      "id": "gb",
+      "name": "NEO GB",
+      "system": "Game Boy / Game Boy Color",
+      "version": "0.1.0",
+      "type": "web-runtime",
+      "entry": "/cores/gb/index.html",
+      "extensions": [
+        ".gb",
+        ".gbc"
+      ],
+      "engine": "EmulatorJS + Gambatte",
+      "status": "stable",
+      "capabilities": [
+        "save-state",
+        "gamepad",
+        "pixel-scaling",
+        "gb",
+        "gbc"
+      ]
+    },
+    {
+      "id": "gba",
+      "name": "NEO GBA",
+      "system": "Game Boy Advance",
+      "version": "0.17.0",
+      "type": "web-native",
+      "entry": "/cores/gba/index.html",
+      "extensions": [
+        ".gba"
+      ],
+      "engine": "ARM7TDMI JavaScript próprio",
+      "status": "experimental",
+      "capabilities": [
+        "indexeddb",
+        "save-state",
+        "gamepad",
+        "pixel-scaling"
+      ]
+    },
+    {
+      "id": "arcade",
+      "name": "NEO Arcade",
+      "system": "Arcade / MAME / FBNeo",
+      "version": "0.2.9",
+      "type": "local-backend",
+      "entry": "/cores/arcade/app/index.html",
+      "extensions": [
+        ".zip",
+        ".7z"
+      ],
+      "engine": "MAME / FBNeo / MAME2003+ externos",
+      "status": "local-runtime",
+      "capabilities": [
+        "multi-core",
+        "bios",
+        "save-state",
+        "cabinet",
+        "mame-index",
+        "core-routing"
+      ]
+    }
+  ]
+}

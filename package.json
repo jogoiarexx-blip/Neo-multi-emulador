@@ -1,0 +1,11 @@
+{
+  "name": "neo-multi",
+  "version": "0.1.6",
+  "private": true,
+  "description": "Hub profissional multi-emulador com núcleos NES, SNES, GB/GBC, GBA e Arcade isolados e adapters individuais.",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node scripts/health-check.js",
+    "arcade:import-mame": "node cores/arcade/tools/import-mame.js"
+  }
+}
