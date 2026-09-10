@@ -1,0 +1,1 @@
+A BIOS oficial do GBA não é distribuída com o NEO GBA.

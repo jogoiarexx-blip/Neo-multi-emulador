@@ -1,0 +1,20 @@
+(()=>{
+const q=new URLSearchParams(location.search);
+const rom=q.get('autoload'); const title=q.get('game')||'Game Boy';
+document.getElementById('gameTitle').textContent=title;
+if(!rom)return;
+document.getElementById('empty').style.display='none';
+document.getElementById('game').style.display='block';
+window.EJS_player='#game';
+window.EJS_core='gb';
+window.EJS_gameName=title;
+window.EJS_color='#57e8ff';
+window.EJS_startOnLoaded=true;
+window.EJS_pathtodata='https://cdn.emulatorjs.org/4.2.3/data/';
+window.EJS_gameUrl=rom;
+window.EJS_threads=false;
+const s=document.createElement('script');
+s.src='https://cdn.emulatorjs.org/4.2.3/data/loader.js';
+s.onerror=()=>{document.getElementById('empty').style.display='block';document.getElementById('empty').textContent='Falha ao carregar o runtime do núcleo GB.'};
+document.body.appendChild(s);
+})();

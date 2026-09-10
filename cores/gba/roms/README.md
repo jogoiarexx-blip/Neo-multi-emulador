@@ -1,0 +1,1 @@
+Coloque apenas ROMs que você tenha direito de usar. Não incluídas no projeto.
