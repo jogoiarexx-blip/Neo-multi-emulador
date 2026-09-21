@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#111827" />
-  <title>NEO GBA v0.17.0</title>
+  <title>NEO GBA v0.19.0</title>
   <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="/shared/core-embed.css?v=0.1.6">
+  <link rel="stylesheet" href="/shared/core-embed.css?v=0.1.8">
 </head>
 <body>
   <main class="app-shell">
@@ -15,7 +15,7 @@
         <h1>NEO GBA</h1>
         <p>Game Boy Advance Emulator</p>
       </div>
-      <span class="version">v0.17.0</span>
+      <span class="version">v0.19.0</span>
     </header>
 
     <section class="screen-panel">
@@ -81,7 +81,7 @@
           <div><dt>Blend</dt><dd id="blendState">—</dd></div>
           <div><dt>Áudio</dt><dd id="audioState">Ativo</dd></div>
 <div><dt>FIFO A/B</dt><dd id="fifoState">0 / 0</dd></div>
-          <div><dt>BIOS</dt><dd>HLE futuro</dd></div>
+          <div><dt>BIOS</dt><dd>HLE SWI + IRQ</dd></div>
         </dl>
       </article>
     </section>
@@ -130,12 +130,12 @@
 
     <section class="log-card">
       <h2>Console do emulador</h2>
-      <pre id="logOutput">NEO GBA v0.17.0 iniciado.</pre>
+      <pre id="logOutput">NEO GBA v0.19.0 iniciado.</pre>
     </section>
   </main>
 
   <script type="module" src="js/app.js"></script>
-  <script src="/shared/core-bridge.js?v=0.1.6"></script>
-  <script src="/shared/adapters/gba.js?v=0.1.6"></script>
+  <script src="/shared/core-bridge.js?v=0.1.8"></script>
+  <script src="/shared/adapters/gba.js?v=0.1.8"></script>
 </body>
 </html>

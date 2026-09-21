@@ -16,10 +16,17 @@
 - sons de interface configuráveis
 - capas automáticas e personalizáveis para a biblioteca local
 
-# SNES Nova v1.5.0
+# SNES Nova v1.5.1
 
 Frontend web/PWA para emulação SNES baseado em EmulatorJS.
 
+
+
+## Correção v1.5.1
+- O modo automático permanece no **Snes9x estável**.
+- **bsnes** continua disponível manualmente como opção experimental/alta precisão; o auto não migra para o runtime pre-release.
+- Encerramento/sessão e smoke tests foram reforçados no NEO Multi v0.1.8.
+- Runtime continua local-first com fallback CDN quando os arquivos locais não estão instalados.
 
 ## Jogo integrado na v1.5.0
 

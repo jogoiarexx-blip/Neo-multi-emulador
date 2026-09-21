@@ -1,12 +1,7 @@
-# ROMs de teste externas
+# Testes externos de precisão NES
 
-Coloque aqui ROMs de teste NES obtidas legalmente (por exemplo suites de CPU/PPU/APU da comunidade).
-O projeto não distribui essas ROMs.
+Esta pasta é opcional e existe para executar ROMs de teste que possam ser redistribuídas legalmente pelo próprio usuário/desenvolvedor.
 
-Execute:
+O runner do NEO NES detecta automaticamente ROMs suportadas colocadas aqui e mantém esses testes separados dos 34 testes internos, evitando que arquivos de terceiros virem dependência obrigatória do projeto.
 
-```bash
-node tests/external-runner.mjs
-```
-
-O runner reconhece o protocolo comum de testes blargg quando a ROM expõe a assinatura em $6001-$6003 e o status em $6000. Para outras ROMs, ele roda um limite de frames e gera CRC/hash do framebuffer para regressão manual.
+Não são incluídas ROMs comerciais ou arquivos sem licença de redistribuição.

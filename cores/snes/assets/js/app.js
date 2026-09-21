@@ -504,14 +504,11 @@
     const accuracyHint = ACCURACY_GAME_HINTS.some(rx => rx.test(combinedName));
     const reasons = [];
 
-    if (learnedProfile?.core && ['snes9x','bsnes'].includes(learnedProfile.core)) {
-      if (learnedProfile.core === 'bsnes' && (hw.weak || bench?.tier === 'low')) {
-        reasons.push('perfil salvo pedia bsnes, mas o benchmark atual priorizou desempenho');
-      } else {
-        reasons.push('perfil aprendido anteriormente para este jogo');
-        return { core: learnedProfile.core, reasons, hw, accuracyHint, learned: true };
-      }
+    if (learnedProfile?.core === 'snes9x') {
+      reasons.push('perfil estável aprendido anteriormente para este jogo');
+      return { core: 'snes9x', reasons, hw, accuracyHint, learned: true };
     }
+    if (learnedProfile?.core === 'bsnes') reasons.push('perfil bsnes salvo ignorado no modo automático por usar runtime pre-release');
 
     if (hw.weak || bench?.tier === 'low') {
       reasons.push('hardware/benchmark mais limitado detectado');
@@ -519,11 +516,7 @@
       return { core: 'snes9x', reasons, hw, accuracyHint };
     }
 
-    if (accuracyHint && (hw.strong || bench?.tier === 'high')) {
-      reasons.push('jogo/chip conhecido por se beneficiar de maior precisão');
-      reasons.push('benchmark/hardware suficiente para bsnes');
-      return { core: 'bsnes', reasons, hw, accuracyHint };
-    }
+    if (accuracyHint) reasons.push('jogo/chip sensível à precisão; bsnes permanece disponível apenas no modo manual/experimental');
 
     reasons.push('jogo não exige precisão extra conhecida');
     reasons.push('Snes9x oferece melhor eficiência para este caso');
@@ -765,13 +758,13 @@
       : { core: prefs.core, reasons: ['core escolhido manualmente nas preferências'], hw: hardwareProfile(), accuracyHint: false };
     if (prefs.core === 'auto' && bundledGame?.preferred === 'snes9x') {
       smartDecision = { core: 'snes9x', reasons: ['perfil conhecido deste jogo', 'Snes9x oferece ótima compatibilidade com menor custo de CPU'], hw: hardwareProfile(), accuracyHint: false };
-    } else if (prefs.core === 'auto' && bundledGame?.preferred === 'bsnes' && hardwareProfile().strong) {
-      smartDecision = { core: 'bsnes', reasons: ['perfil conhecido deste jogo', 'hardware suficiente para priorizar maior precisão'], hw: hardwareProfile(), accuracyHint: true };
+    } else if (prefs.core === 'auto' && bundledGame?.preferred === 'bsnes') {
+      smartDecision = { core: 'snes9x', reasons: ['perfil conhecido deste jogo', 'modo automático mantém o runtime estável; bsnes fica disponível manualmente'], hw: hardwareProfile(), accuracyHint: true };
     }
     if (prefs.core === 'auto' && compatibility) {
       const hwNow = hardwareProfile();
       const rec = compatibility.recommendedCore;
-      if (rec === 'bsnes' && !hwNow.weak && getBenchmark()?.tier !== 'low') smartDecision = { core:'bsnes', reasons:['banco de compatibilidade por CRC32/SHA-1', compatibility.notes || 'perfil de precisão recomendado'], hw:hwNow, accuracyHint:true, database:true };
+      if (rec === 'bsnes') smartDecision = { core:'snes9x', reasons:['banco recomenda bsnes, mas o modo automático mantém Snes9x estável', compatibility.notes || 'bsnes pode ser selecionado manualmente'], hw:hwNow, accuracyHint:true, database:true };
       else if (rec === 'snes9x' || compatibility.fallbackCore === 'snes9x') smartDecision = { core:'snes9x', reasons:['banco de compatibilidade por CRC32/SHA-1', compatibility.notes || 'perfil de desempenho recomendado'], hw:hwNow, accuracyHint:false, database:true };
     }
     let selectedCore = smartDecision.core;
@@ -786,8 +779,12 @@
     window.__SNESNovaBootPhase = 'preparar engine';
     const enginePrep = await window.SNESNova?.engine?.prepareBoot?.({core:selectedCore,romHash:engineHash});
     if (prefs.core === 'auto' && enginePrep?.profile?.core && enginePrep.profile.core !== selectedCore) {
-      selectedCore = enginePrep.profile.core;
-      smartDecision = {...smartDecision, core:selectedCore, reasons:[...(smartDecision.reasons||[]), 'perfil adaptativo por jogo + dispositivo']};
+      if (enginePrep.profile.core === 'snes9x') {
+        selectedCore = 'snes9x';
+        smartDecision = {...smartDecision, core:selectedCore, reasons:[...(smartDecision.reasons||[]), 'perfil adaptativo estável por jogo + dispositivo']};
+      } else {
+        smartDecision = {...smartDecision, reasons:[...(smartDecision.reasons||[]), 'perfil adaptativo bsnes ignorado no automático por estabilidade']};
+      }
     }
     window.SNESNova?.session?.begin({title: bundledGame?.title || safeTitle(file.name), hash: romInfo.sha1 || romInfo.crc32 || profileKey, core:selectedCore});
     addRecent(file);
@@ -821,7 +818,6 @@
     window.EJS_onSaveState = function(e){ window.dispatchEvent(new CustomEvent('snesnova:savestate',{detail:{payload:e,hash:romInfo.sha1||romInfo.crc32||profileKey,at:Date.now()}})); };
     window.EJS_onLoadState = function(e){ window.dispatchEvent(new CustomEvent('snesnova:loadstate',{detail:{payload:e,hash:romInfo.sha1||romInfo.crc32||profileKey,at:Date.now()}})); };
     window.EJS_onSaveUpdate = function(e){ window.dispatchEvent(new CustomEvent('snesnova:saveupdate',{detail:{payload:e,hash:romInfo.sha1||romInfo.crc32||profileKey,at:Date.now()}})); };
-    window.EJS_onExit = function(){ window.SNESNova?.session?.stop('ejs-exit'); window.dispatchEvent(new CustomEvent('snesnova:ejsexit')); };
     window.EJS_pathtodata = dataPath;
     window.EJS_language = 'pt-BR';
     window.EJS_volume = prefs.volume;
@@ -847,7 +843,7 @@
       loadSavFiles: true, quickSave: true, quickLoad: true, screenshot: true,
       cacheManager: true, exitEmulation: true
     };
-    window.EJS_onExit = async () => { await window.SNESNova?.session?.stop?.('ejs-exit'); showLibrary(); };
+    window.EJS_onExit = async () => { window.dispatchEvent(new CustomEvent('snesnova:ejsexit')); await window.SNESNova?.session?.stop?.('ejs-exit'); showLibrary(); };
     window.EJS_onGameStart = () => {
       document.title = `${title} • SNES Nova`;
       focusPlayerView('smooth');
@@ -883,7 +879,7 @@
     window.SNESNova?.session?.stop('library');
     playerView.hidden = true;
     launcherView.hidden = false;
-    document.title = 'SNES Nova 1.5.0';
+    document.title = 'SNES Nova 1.5.1';
     $('#game').innerHTML = '';
     restoreLibraryScroll();
     // Full core teardown is owned by EmulatorJS exit button. Reload offers a guaranteed clean boot.
@@ -906,9 +902,9 @@
     const el = $('#coreAdvice');
     if (!el) return;
     if (coreSelect.value === 'auto') {
-      el.textContent = 'Automático: analisa hardware + ROM e escolhe Snes9x ou bsnes ao iniciar.';
+      el.textContent = 'Automático: usa Snes9x estável. bsnes fica disponível manualmente como modo experimental de maior precisão.';
     } else if (coreSelect.value === 'bsnes') {
-      el.textContent = 'bsnes forçado: prioriza precisão, mas exige mais processamento.';
+      el.textContent = 'bsnes experimental: prioriza precisão, exige mais processamento e usa runtime pre-release fixado.';
     } else {
       el.textContent = 'Snes9x forçado: prioriza desempenho e ótima compatibilidade.';
     }

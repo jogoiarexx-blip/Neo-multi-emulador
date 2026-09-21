@@ -1,7 +1,7 @@
 {
   "name": "SNES Nova",
   "short_name": "SNES Nova",
-  "description": "SNES Nova 1.5.0 — interface estilo console com player em painel, sidebar, categorias visuais, capas grandes, conquistas e biblioteca local.",
+  "description": "SNES Nova 1.5.1 — interface estilo console com player em painel, sidebar, categorias visuais, capas grandes, conquistas e biblioteca local.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

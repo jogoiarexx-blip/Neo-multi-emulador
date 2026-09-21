@@ -4,13 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#0b1020" />
-  <meta name="description" content="SNES Nova 1.5.0 — emulador de Super Nintendo com visual premium, biblioteca local, Engine v1 e seleção inteligente entre Snes9x e bsnes." />
+  <meta name="description" content="SNES Nova 1.5.1 — emulador de Super Nintendo com visual premium, biblioteca local, Engine v1 e seleção inteligente entre Snes9x e bsnes." />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="assets/icons/icon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="assets/css/app.css?v=1.5.0" />
-  <title>SNES Nova 1.5.0</title>
+  <link rel="stylesheet" href="assets/css/app.css?v=1.5.1" />
+  <title>SNES Nova 1.5.1</title>
   <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="/shared/core-embed.css?v=0.1.6">
+  <link rel="stylesheet" href="./shared/core-embed.css?v=0.1.8">
 </head>
 <body>
   <div id="bootScreen" class="boot-screen"><img class="boot-logo-image boot-logo-modern" src="assets/branding/logo-full-modern.png" alt="SNES Nova" /><p id="bootStatus">Preparando biblioteca, trilha visual, runtime e controles…</p><div class="boot-progress"><i></i></div></div>
@@ -20,7 +20,7 @@
         <img class="brand-logo brand-logo-modern" src="assets/branding/logo-mark-modern.png" alt="SNES Nova" />
         <div class="brand-copy">
           <img class="brand-wordmark" src="assets/branding/logo-full-modern.png" alt="SNES Nova" />
-          <span>v1.5.0 • Console UI • Engine V1</span>
+          <span>v1.5.1 • Console UI • Engine V1</span>
         </div>
       </div>
       <div class="top-actions">
@@ -83,7 +83,7 @@
               <select id="coreSelect">
                 <option value="auto">Automático inteligente — recomendado</option>
                 <option value="snes9x">Snes9x — desempenho</option>
-                <option value="bsnes">bsnes — maior precisão</option>
+                <option value="bsnes">bsnes — experimental / maior precisão</option>
               </select>
             </label>
             <div id="coreAdvice" class="core-advice">O modo automático analisa a ROM e o hardware ao abrir o jogo.</div>
@@ -240,7 +240,7 @@
       <footer class="app-footer">
         <div class="footer-brand">
           <img class="footer-logo-modern" src="assets/branding/logo-mark-modern.png" alt="SNES Nova" />
-          <div><img class="footer-wordmark" src="assets/branding/logo-full-modern.png" alt="SNES Nova" /><span>Engine v1 • Console UI 1.5.0</span></div>
+          <div><img class="footer-wordmark" src="assets/branding/logo-full-modern.png" alt="SNES Nova" /><span>Engine v1 • Console UI 1.5.1</span></div>
         </div>
         <div class="footer-grid">
           <span>Biblioteca local</span><span>Core inteligente</span><span>PWA & offline</span><span>Mobile & TV</span>
@@ -279,7 +279,7 @@
       <label class="switch-row"><span>Sons de interface</span><input id="uiSoundToggle" type="checkbox" checked><i></i></label>
       <label class="field">Volume dos sons da interface <input id="uiSoundVolumeRange" type="range" min="0" max="1" step="0.05" value="0.35"></label>
       <div class="mobile-settings" id="mobileSettings">
-        <div class="panel-title"><span>Mobile</span><small>v1.5.0</small></div>
+        <div class="panel-title"><span>Mobile</span><small>v1.5.1</small></div>
         <label class="field">Perfil mobile<select id="mobileProfileSelect"><option value="auto">Automático</option><option value="battery">Economia de bateria</option><option value="balanced">Equilibrado</option><option value="quality">Qualidade</option></select></label>
         <label class="field">Tamanho dos controles<select id="touchScaleSelect"><option value="0.78">78%</option><option value="0.9">90%</option><option value="1">100%</option><option value="1.12">112%</option><option value="1.25">125%</option></select></label>
         <label class="field">Opacidade dos controles<input id="touchOpacityRange" type="range" min="0.3" max="1" step="0.05" value="0.72"></label>
@@ -292,31 +292,31 @@
     </form>
   </dialog>
 
-  <script src="assets/js/engine/workers/worker-manager.js?v=1.5.0"></script>
-  <script src="assets/js/engine/core/core-manager.js?v=1.5.0"></script>
-  <script src="assets/js/engine/performance/adaptive-engine.js?v=1.5.0"></script>
-  <script src="assets/js/engine/engine-manager.js?v=1.5.0"></script>
-  <script src="assets/js/engine/video/video-engine.js?v=1.5.0"></script>
-  <script src="assets/js/engine/video/gpu-presenter.js?v=1.5.0"></script>
-  <script src="assets/js/engine/audio/adaptive-audio.js?v=1.5.0"></script>
-  <script src="assets/js/engine/input/low-latency-input.js?v=1.5.0"></script>
-  <script src="assets/js/modules/logger.js?v=1.5.0"></script>
-  <script src="assets/js/modules/zip-reader.js?v=1.5.0"></script>
-  <script src="assets/js/modules/rom-analyzer.js?v=1.5.0"></script>
-  <script src="assets/js/modules/compatibility.js?v=1.5.0"></script>
-  <script src="assets/js/modules/session-manager.js?v=1.5.0"></script>
-  <script src="assets/js/modules/patches.js?v=1.5.0"></script>
-  <script src="assets/js/modules/diagnostics.js?v=1.5.0"></script>
-  <script src="assets/js/modules/enhancements.js?v=1.5.0"></script>
-  <script src="assets/js/modules/achievements.js?v=1.5.0"></script>
-  <script src="assets/js/engine/workers/offload.js?v=1.5.0"></script>
-  <script src="assets/js/app.js?v=1.5.0"></script>
-  <script src="assets/js/advanced.js?v=1.5.0"></script>
-  <script src="assets/js/v090.js?v=1.5.0"></script>
-  <script src="assets/js/v091.js?v=1.5.0"></script>
-  <script src="assets/js/v100.js?v=1.5.0"></script>
-  <script src="assets/js/v102.js?v=1.5.0"></script>
-  <script src="/shared/core-bridge.js?v=0.1.6"></script>
-  <script src="/shared/adapters/snes.js?v=0.1.6"></script>
+  <script src="assets/js/engine/workers/worker-manager.js?v=1.5.1"></script>
+  <script src="assets/js/engine/core/core-manager.js?v=1.5.1"></script>
+  <script src="assets/js/engine/performance/adaptive-engine.js?v=1.5.1"></script>
+  <script src="assets/js/engine/engine-manager.js?v=1.5.1"></script>
+  <script src="assets/js/engine/video/video-engine.js?v=1.5.1"></script>
+  <script src="assets/js/engine/video/gpu-presenter.js?v=1.5.1"></script>
+  <script src="assets/js/engine/audio/adaptive-audio.js?v=1.5.1"></script>
+  <script src="assets/js/engine/input/low-latency-input.js?v=1.5.1"></script>
+  <script src="assets/js/modules/logger.js?v=1.5.1"></script>
+  <script src="assets/js/modules/zip-reader.js?v=1.5.1"></script>
+  <script src="assets/js/modules/rom-analyzer.js?v=1.5.1"></script>
+  <script src="assets/js/modules/compatibility.js?v=1.5.1"></script>
+  <script src="assets/js/modules/session-manager.js?v=1.5.1"></script>
+  <script src="assets/js/modules/patches.js?v=1.5.1"></script>
+  <script src="assets/js/modules/diagnostics.js?v=1.5.1"></script>
+  <script src="assets/js/modules/enhancements.js?v=1.5.1"></script>
+  <script src="assets/js/modules/achievements.js?v=1.5.1"></script>
+  <script src="assets/js/engine/workers/offload.js?v=1.5.1"></script>
+  <script src="assets/js/app.js?v=1.5.1"></script>
+  <script src="assets/js/advanced.js?v=1.5.1"></script>
+  <script src="assets/js/v090.js?v=1.5.1"></script>
+  <script src="assets/js/v091.js?v=1.5.1"></script>
+  <script src="assets/js/v100.js?v=1.5.1"></script>
+  <script src="assets/js/v102.js?v=1.5.1"></script>
+  <script src="./shared/core-bridge.js?v=0.1.8"></script>
+  <script src="./shared/adapters/snes.js?v=0.1.8"></script>
 </body>
 </html>

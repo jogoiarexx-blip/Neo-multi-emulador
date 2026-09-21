@@ -1,50 +1,42 @@
-# NEO Multi v0.1.6
+# NEO Multi v0.1.8
 
-Hub unificado para NEO NES, SNES Nova, NEO GBA e NEO Arcade com arquitetura modular.
+Hub unificado para NEO NES, SNES Nova, NEO GB/GBC, NEO GBA e NEO Arcade com arquitetura modular.
 
 ## Executar
 1. Tenha Node.js instalado.
 2. Execute `npm start` na raiz.
-3. Abra o endereço mostrado no terminal (usa a porta configurada pelo núcleo Arcade).
+3. Abra o endereço mostrado no terminal (porta padrão do Hub: `4780`).
 
 No Windows também pode executar `INICIAR-NEO-MULTI.bat`.
 
+## Núcleos desta versão
+- `cores/nes/`: NEO NES v0.8.12 — core próprio, 34/34 suítes internas aprovadas.
+- `cores/snes/`: SNES Nova v1.5.1 — Snes9x estável por padrão; bsnes é opção manual/experimental.
+- `cores/gb/`: NEO GB/GBC v0.2.1 — EmulatorJS + Gambatte, runtime local-first com fallback CDN.
+- `cores/gba/`: NEO GBA v0.19.0 — core próprio experimental, com pipeline/branch, IRQ HLE, PPU OBJ, memória e testes de boot reforçados.
+- `cores/arcade/`: NEO Arcade v0.3.1 — frontend/backend para MAME/FBNeo, executáveis externos necessários.
+
+## v0.1.8 — precisão e QA
+- GBA: correção do PC arquitetural ARM/THUMB, `B`, `BL`, IRQ HLE, `IntrWait`, `VBlankIntrWait`, sprites, affine/flip, prioridades, writes de Palette/VRAM/OAM e reads desalinhados.
+- GBA: novo smoke test com boot real de ROM por 120 frames, além das regressões unitárias.
+- SNES: modo automático permanece no Snes9x estável; bsnes pre-release só é selecionado manualmente.
+- GB/GBC: instaladores próprios para runtime local EmulatorJS 4.2.3.
+- Arcade: compatibilidade deixa de ser marcada como “funcionando” apenas porque o processo ficou aberto por alguns segundos.
+- QA: `npm test` agora executa health-check, GBA (regressão + boot), SNES, GB/GBC, Arcade e NES.
+- Health-check diferencia falha do projeto de dependência externa ausente.
+
+## Dependências externas
+O ZIP não incorpora binários de terceiros que não estavam disponíveis para download no ambiente de build:
+- SNES e GB/GBC tentam runtime EmulatorJS local primeiro e usam o CDN oficial como fallback.
+- Scripts de instalação do runtime local ficam em `cores/snes/scripts/` e `cores/gb/scripts/`.
+- Arcade requer que MAME/FBNeo compatíveis sejam instalados/configurados nas pastas indicadas pelo próprio frontend.
+
 ## Estrutura
 - `app/`: interface única.
-- `config/cores.json`: registro dos núcleos.
-- `cores/nes/`: NEO NES v0.8.12.
-- `cores/snes/`: SNES Nova v1.5.0.
-- `cores/gba/`: NEO GBA v0.17.0.
-- `cores/arcade/`: NEO Arcade v0.2.9 + backend/API.
+- `config/cores.json`: registro/versionamento dos núcleos.
+- `shared/`: Core Bridge e adapters independentes.
+- `scripts/health-check.js`: valida estrutura, versões, sintaxe, JSON e dependências opcionais.
 - `docs/`: regras de arquitetura e evolução.
 
 ## Importante
-O Hub não mistura as engines. Cada núcleo pode ser corrigido, testado, versionado e substituído de forma independente.
-
-
-## v0.1.6 — Biblioteca unificada
-- Biblioteca global NES/SNES/GBA/Arcade.
-- Detecção automática de núcleo por sistema/formato.
-- Favoritos globais.
-- Importação de ROM pelo Hub.
-- Abertura direta do jogo sem navegar manualmente pelo núcleo.
-
-
-## v0.1.6 — Core Embedded Mode
-- Núcleos continuam independentes, mas em jogos iniciados pelo Hub entram em modo embarcado.
-- HUD duplicada removida: o Hub controla sair, pause, reset, quick save/load e fullscreen via Core Bridge.
-- Iframe sem rolagem e estágio ocupa toda a área útil.
-- Core Bridge compartilhado isola a integração da implementação de cada emulador.
-
-
-## v0.1.6 — Core Adapters e HUD técnica
-
-Cada núcleo agora possui um adapter independente em `shared/adapters/`. O Hub usa `core-bridge.js` somente como protocolo comum e não acessa internals de outro emulador. A tela de jogo exibe telemetria compacta de engine, FPS, vídeo, áudio, gamepad, slot e estado. Recursos não expostos por um núcleo ficam desabilitados no Hub em vez de simular suporte.
-
-
-## v0.1.6 — correção de vídeo em modo integrado
-- Corrige caso em que o áudio do SNES iniciava, mas o overlay `Preparando jogo` permanecia sobre o vídeo.
-- CoreBridge agora anuncia `ready` mesmo se for carregado após `DOMContentLoaded`.
-- Hub possui fallback seguro no evento `iframe.load` e watchdog de inicialização.
-- Modo embarcado força canvas/iframe do runtime a permanecer visível e remove telas internas de boot sobrepostas.
-- URLs dos assets compartilhados receberam cache-busting para evitar CSS/bridge antigos no navegador.
+O Hub não mistura as engines. Cada núcleo pode ser corrigido, testado, versionado e substituído de forma independente. O NEO GBA continua classificado como **experimental**: os novos testes aumentam muito a segurança contra regressões, mas não equivalem a conformidade completa com o hardware real.

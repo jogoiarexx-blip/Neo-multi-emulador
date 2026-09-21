@@ -17,7 +17,7 @@ A v0.8.12 preserva o core NES da v0.8.6 e adiciona formatos de mídia sem mistur
 - NSF/NSFe usa a CPU 2A03/APU existente e um cartucho virtual próprio; não duplica o core de áudio.
 - O player chama INIT/PLAY com watchdog e mantém CPU/APU rodando entre chamadas.
 - Banking NSF de 4 KB fica isolado no cartucho virtual.
-- FDS nesta etapa é parser/BIOS/side-management. Drive, IRQ, escrita e áudio FDS não são anunciados como completos.
+- FDS começou nesta linha como parser/BIOS/side-management; as seções **v0.8.12 — FDS Core** abaixo substituem essa limitação histórica e descrevem o dispositivo executável atual.
 - O fluxo de ROM `.nes` continua intacto.
 - PWA recebeu cache explícito dos novos módulos.
 
@@ -25,7 +25,7 @@ A v0.8.12 preserva o core NES da v0.8.6 e adiciona formatos de mídia sem mistur
 
 - Expansion audio declarado por NSF/NSFe ainda não é roteado pelo cartucho virtual; o player informa isso na UI em vez de produzir áudio incorreto silenciosamente.
 - NSFe implementa os chunks centrais (INFO/DATA/BANK/auth/tlbl/time/fade); chunks opcionais desconhecidos são ignorados com segurança.
-- FDS exige BIOS de 8192 bytes e ainda não executa jogos nesta revisão.
+- FDS exige BIOS de 8192 bytes. Na v0.8.12 atual ele já executa pelo dispositivo de barramento descrito abaixo; precisão física de gaps/CRC e alguns detalhes analógicos ainda são aproximações conhecidas.
 
 ### Regressão
 

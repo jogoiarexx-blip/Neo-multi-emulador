@@ -11,6 +11,7 @@ export class APU {
 
     this.phase1 = this.phase2 = this.phase3 = 0;
     this.lfsr = 0x7FFF;
+    this.noisePhase = 0;
 
     this.fifoA = [];
     this.fifoB = [];
@@ -38,6 +39,7 @@ export class APU {
     this.frameSeqStep = 0;
     this.phase1 = this.phase2 = this.phase3 = 0;
     this.lfsr = 0x7FFF;
+    this.noisePhase = 0;
     this.fifoA.length = this.fifoB.length = 0;
     this.left.length = this.right.length = 0;
     this.dsA = this.dsB = 0;
@@ -151,7 +153,9 @@ export class APU {
     const vol=(this.env4 ?? ((h>>>12)&15))/15;
     const div=(h&7)||.5, shift=(h>>>4)&15;
     const f=524288/div/(1<<(shift+1));
-    if(Math.random()<f/this.sampleRate){
+    this.noisePhase += f/this.sampleRate;
+    while(this.noisePhase>=1){
+      this.noisePhase-=1;
       const bit=(this.lfsr^(this.lfsr>>1))&1;
       this.lfsr=(this.lfsr>>1)|(bit<<14);
     }
@@ -198,6 +202,15 @@ export class APU {
     L*=this.volume*biasGain;
     R*=this.volume*biasGain;
     return [Math.max(-1,Math.min(1,L)),Math.max(-1,Math.min(1,R))];
+  }
+
+  createState(){
+    return {accum:this.accum,frameSeqCycles:this.frameSeqCycles,frameSeqStep:this.frameSeqStep,phase1:this.phase1,phase2:this.phase2,phase3:this.phase3,lfsr:this.lfsr,noisePhase:this.noisePhase,fifoA:[...this.fifoA],fifoB:[...this.fifoB],dsA:this.dsA,dsB:this.dsB,env1:this.env1,env2:this.env2,env4:this.env4,length1:this.length1,length2:this.length2,length3:this.length3,length4:this.length4,sweepShadow:this.sweepShadow,sweepTimer:this.sweepTimer,sweepEnabled:this.sweepEnabled};
+  }
+
+  restoreState(s){
+    if(!s)return;for(const k of ['accum','frameSeqCycles','frameSeqStep','phase1','phase2','phase3','lfsr','noisePhase','dsA','dsB','env1','env2','env4','length1','length2','length3','length4','sweepShadow','sweepTimer'])if(s[k]!==undefined)this[k]=s[k];
+    this.sweepEnabled=!!s.sweepEnabled;this.fifoA=[...(s.fifoA||[])];this.fifoB=[...(s.fifoB||[])];this.left.length=0;this.right.length=0;
   }
 
   tick(c){

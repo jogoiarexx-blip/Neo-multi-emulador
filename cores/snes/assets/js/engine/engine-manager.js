@@ -20,5 +20,5 @@ async function prepareBoot(ctx={}){const c=caps();const result={caps:c,deviceKey
   window.dispatchEvent(new CustomEvent('snesnova:engineprepared',{detail:result}));return result;
 }
 function recommendedBuild(core,c=caps()){if(core==='snes9x'&&c.simd)return 'simd';if(core==='bsnes'&&c.simd&&tier(c)!=='low')return 'simd';return 'standard'}
-N.engine={version:'1.5.0',config,caps,deviceKey,tier,prepareBoot,recommendedBuild,save};
+N.engine={version:'1.5.1',config,caps,deviceKey,tier,prepareBoot,recommendedBuild,save};
 })();

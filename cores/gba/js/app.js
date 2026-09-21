@@ -152,27 +152,50 @@ $("fullscreenBtn").addEventListener("click", async () => {
 }));
 dropZone.addEventListener("drop", e => openROM(e.dataTransfer.files[0]));
 
-let frames = 0;
-let last = performance.now();
+let emulatedFrames = 0;
+let fpsWindowStart = performance.now();
+let schedulerLast = performance.now();
+let schedulerAccumulator = 0;
+
+function updateRuntimePanel() {
+  $("pcValue").textContent = `0x${gba.cpu.pc.toString(16).toUpperCase().padStart(8,"0")}`;
+  $("cycleCount").textContent = gba.cpu.cycles.toLocaleString("pt-BR");
+  $("cpuMode").textContent = gba.cpu.thumb ? "THUMB" : "ARM";
+  $("vcountValue").textContent = gba.ppu.vcount;
+  $("frameCount").textContent = gba.ppu.frame.toLocaleString("pt-BR");
+  const vm = gba.memory.read16(0x04000000) & 7;
+  $("videoMode").textContent = vm;
+  $("affineState").textContent = (vm === 1 || vm === 2) ? "Ativo" : "—";
+  const bm=(gba.memory.read16(0x04000050)>>>6)&3;
+  $("blendState").textContent=["Off","Alpha","Clarear","Escurecer"][bm];
+}
+
 function tick(now) {
+  const delta = Math.min(100, Math.max(0, now - schedulerLast));
+  schedulerLast = now;
   if (gba.running && !gba.paused) {
-    gba.runCycles(6000);
-    frames++;
-    $("pcValue").textContent = `0x${gba.cpu.pc.toString(16).toUpperCase().padStart(8,"0")}`;
-    $("cycleCount").textContent = gba.cpu.cycles.toLocaleString("pt-BR");
-    $("cpuMode").textContent = gba.cpu.thumb ? "THUMB" : "ARM";
-    $("vcountValue").textContent = gba.ppu.vcount;
-    $("frameCount").textContent = gba.ppu.frame.toLocaleString("pt-BR");
-    const vm = gba.memory.read16(0x04000000) & 7;
-    $("videoMode").textContent = vm;
-    $("affineState").textContent = (vm === 1 || vm === 2) ? "Ativo" : "—";
-    const bm=(gba.memory.read16(0x04000050)>>>6)&3;
-    $("blendState").textContent=["Off","Alpha","Clarear","Escurecer"][bm];
+    const frameMs = 1000 / gba.nominalFps;
+    schedulerAccumulator += delta;
+    let catchUp = 0;
+    while (schedulerAccumulator >= frameMs && catchUp < 2) {
+      const before = gba.ppu.frame;
+      gba.runFrame();
+      emulatedFrames += Math.max(0, gba.ppu.frame - before);
+      schedulerAccumulator -= frameMs;
+      catchUp++;
+    }
+    // Avoid a spiral of death after tab suspension or a slow host.
+    if (schedulerAccumulator > frameMs * 2) schedulerAccumulator = frameMs * 2;
+    updateRuntimePanel();
+  } else {
+    schedulerAccumulator = 0;
   }
-  if (now - last >= 1000) {
-    $("fpsText").textContent = `FPS: ${gba.running && !gba.paused ? frames : "--"}`;
-    frames = 0;
-    last = now;
+  if (now - fpsWindowStart >= 1000) {
+    const elapsed = Math.max(1, now - fpsWindowStart);
+    const fps = emulatedFrames * 1000 / elapsed;
+    $("fpsText").textContent = `FPS: ${gba.running && !gba.paused ? fps.toFixed(1) : "--"}`;
+    emulatedFrames = 0;
+    fpsWindowStart = now;
   }
   requestAnimationFrame(tick);
 }
@@ -334,4 +357,17 @@ $("saveGameProfileBtn").addEventListener("click",()=>{
 });
 
 renderStoredROMs();
-\nasync function neoMultiAutoLoad(){const p=new URLSearchParams(location.search),u=p.get('autoload');if(!u)return;try{const r=await fetch(u,{cache:'no-store'});if(!r.ok)throw new Error('ROM não encontrada');const blob=await r.blob();const name=p.get('game')||decodeURIComponent(u.split('/').pop()||'game.gba');const f=new File([blob],name.toLowerCase().endsWith('.gba')?name:name+'.gba',{type:'application/octet-stream'});await gba.apu.startAudio().catch(()=>{});await openROM(f)}catch(e){log(`AUTOLOAD ERRO: ${e.message}`)}}\nsetTimeout(neoMultiAutoLoad,180);\n
+async function neoMultiAutoLoad(){
+  const p=new URLSearchParams(location.search),u=p.get('autoload');
+  if(!u)return;
+  try{
+    const r=await fetch(u,{cache:'no-store'});
+    if(!r.ok)throw new Error('ROM não encontrada');
+    const blob=await r.blob();
+    const name=p.get('game')||decodeURIComponent(u.split('/').pop()||'game.gba');
+    const f=new File([blob],name.toLowerCase().endsWith('.gba')?name:name+'.gba',{type:'application/octet-stream'});
+    await gba.apu.startAudio().catch(()=>{});
+    await openROM(f);
+  }catch(e){log(`AUTOLOAD ERRO: ${e.message}`)}
+}
+setTimeout(neoMultiAutoLoad,180);

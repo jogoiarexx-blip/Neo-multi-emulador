@@ -1,6 +1,6 @@
 @echo off
 setlocal
-title NEO ARCADE v0.2.9 - Configuracao inicial
+title NEO ARCADE v0.3.1 - Configuracao inicial
 cd /d "%~dp0"
 where node >nul 2>nul
 if errorlevel 1 (

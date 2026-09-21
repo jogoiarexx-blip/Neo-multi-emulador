@@ -19,7 +19,7 @@ for src in re.findall(r'<script[^>]+src="([^"]+)"',html):
  if src.startswith(('http://','https://')): continue
  src=src.split('?',1)[0]
  assert (r/src).exists(), f'missing script: {src}'
-assert 'SNES Nova 1.5.0' in html
+assert 'SNES Nova 1.5.1' in html
 assert 'achievementsBtn' in html
 assert 'achievementsDialog' in html
 assert (r/'ENGINE.md').exists()

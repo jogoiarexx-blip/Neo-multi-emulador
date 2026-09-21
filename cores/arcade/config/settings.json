@@ -1,6 +1,6 @@
 {
   "appName": "NEO ARCADE",
-  "version": "0.2.9",
+  "version": "0.3.1",
   "port": 4780,
   "defaultCore": "auto",
   "autoResume": true,
@@ -259,5 +259,6 @@
   "firstRun": {
     "enabled": true,
     "stateFile": "config/first-run.json"
-  }
+  },
+  "standalonePort": 4781
 }

@@ -6,6 +6,7 @@ const crypto = require('crypto');
 const { spawn } = require('child_process');
 
 const HUB_ROOT = __dirname;
+const HUB_VERSION = require('./package.json').version;
 const ROOT = path.join(HUB_ROOT, 'cores', 'arcade');
 const APP = path.join(HUB_ROOT, 'app');
 const CORES_ROOT = path.join(HUB_ROOT, 'cores');
@@ -23,6 +24,7 @@ const USER_FILE = path.join(ROOT,'config','user.json');
 const CONTROL_FILE = path.join(ROOT, (SETTINGS.controls&&SETTINGS.controls.profilesFile)||'config/control-profiles.json');
 let activeGameProcess=null;
 let activeGameInfo=null;
+function activeProcessRunning(){return Boolean(activeGameProcess && activeGameProcess.exitCode===null && !activeGameProcess.killed);}
 const DIAG=SETTINGS.diagnostics||{};
 const LOG_FILE=path.join(ROOT,DIAG.logFile||'logs/neo-arcade.log');
 const AUDIT_FILE=path.join(ROOT,DIAG.auditReportFile||'logs/library-audit.json');
@@ -391,7 +393,7 @@ function saveUser(data){ fs.writeFileSync(USER_FILE, JSON.stringify(data,null,2)
 const mime = {'.html':'text/html','.css':'text/css','.js':'application/javascript','.mjs':'application/javascript','.json':'application/json','.webmanifest':'application/manifest+json','.wasm':'application/wasm','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.svg':'image/svg+xml','.ico':'image/x-icon','.bin':'application/octet-stream','.sfc':'application/octet-stream','.smc':'application/octet-stream','.nes':'application/octet-stream','.gba':'application/octet-stream','.zip':'application/zip'};
 
 function send(res,code,data,type='application/json'){
-  res.writeHead(code, {'Content-Type': type+'; charset=utf-8','Cache-Control':'no-store'});
+  res.writeHead(code, {'Content-Type': type+'; charset=utf-8','Cache-Control':'no-store','Cross-Origin-Opener-Policy':'same-origin','Cross-Origin-Embedder-Policy':'credentialless','Origin-Agent-Cluster':'?1'});
   if (Buffer.isBuffer(data)) return res.end(data);
   res.end(type==='application/json' ? JSON.stringify(data) : data);
 }
@@ -408,10 +410,13 @@ function walk(dir, out=[]){
 }
 
 function sha1File(file){
+  let fd=null;
   try{
-    const data=fs.readFileSync(file);
-    return crypto.createHash('sha1').update(data).digest('hex');
-  }catch(e){ return null; }
+    fd=fs.openSync(file,'r');
+    const hash=crypto.createHash('sha1'),buf=Buffer.allocUnsafe(1024*1024);let pos=0;
+    for(;;){const n=fs.readSync(fd,buf,0,buf.length,pos);if(!n)break;hash.update(buf.subarray(0,n));pos+=n;}
+    return hash.digest('hex');
+  }catch(e){return null;}finally{if(fd!==null)try{fs.closeSync(fd)}catch{}}
 }
 
 // Minimal ZIP central-directory reader: no decompression required.
@@ -503,6 +508,8 @@ function scanRoms(){
 
   const bios=scanBios();
   const mameIndex=loadMameIndex();
+  const romSetIds=new Set(files.map(normalizedGameId));
+  const biosSetIds=new Set(walk(BIOS_ROOT).map(normalizedGameId));
   const cache=libraryCache(); const seenCacheKeys=new Set(); let cacheHits=0,cacheMisses=0;
   const shaSeen=new Map();
   const idSeen=new Map();
@@ -565,8 +572,7 @@ function scanRoms(){
     // Check whether required MAME parent/BIOS set is present somewhere under roms or bios.
     if(mame && mame.romof){
       const parent=mame.romof.toLowerCase();
-      const haveParent=files.some(f=>normalizedGameId(f)===parent) ||
-        walk(BIOS_ROOT).some(f=>normalizedGameId(f)===parent);
+      const haveParent=romSetIds.has(parent) || biosSetIds.has(parent);
       if(!haveParent) issues.push({level:'warn',code:'PARENT_MISSING',message:`Romset pai/BIOS "${mame.romof}" não encontrado em roms/ ou bios/.`});
     }
 
@@ -665,6 +671,7 @@ function chooseLaunchCore(game,requestedCore){
 
 function launch(game,requestedCore,resumeSlot=null){
   logEvent('launch_requested',{gameId:game.id,title:game.title,requestedCore,resumeSlot});
+  if(activeProcessRunning()) throw new Error(`Já existe um jogo em execução: ${activeGameInfo?.title||'Arcade'}. Encerre-o antes de iniciar outro.`);
   const recovery=SETTINGS.launchRecovery&&SETTINGS.launchRecovery.enabled!==false;
   const selected=recovery?chooseLaunchCore(game,requestedCore):{coreId:resolveCore(game,requestedCore),attempts:[]};
   const coreId=selected.coreId;
@@ -727,17 +734,32 @@ function launch(game,requestedCore,resumeSlot=null){
     }
   }
 
-  const child=spawn(exe,args,{cwd:path.dirname(exe),detached:false,stdio:'ignore'});
-  activeGameProcess=child;
-  activeGameInfo={id:game.id,title:game.title,core:coreId,startedAt:new Date().toISOString()};
-  beginPlayStat(game,coreId);
-  child.on('exit',()=>{
-    if(activeGameInfo){
-      endPlayStat(activeGameInfo.id,activeGameInfo.startedAt);
-      try{touchStateMeta(game.gameId,'auto','Autosave');}catch(e){}
-    }
-    logEvent('launch_exited',{gameId:game.id,title:game.title,core:coreId});
-    activeGameProcess=null;activeGameInfo=null;
+  let child;
+  try{child=spawn(exe,args,{cwd:path.dirname(exe),detached:false,stdio:'ignore'});}
+  catch(err){rememberFailedCore(game,coreId,'spawn_exception');logEvent('launch_spawn_error',{gameId:game.id,title:game.title,core:coreId,error:err.message});throw err;}
+  const sessionInfo={id:game.id,gameId:game.gameId,title:game.title,core:coreId,startedAt:new Date().toISOString()};
+  activeGameProcess=child;activeGameInfo=sessionInfo;
+  let finalized=false,statsStarted=false;
+  const finalize=(reason,extra={})=>{
+    if(finalized)return;finalized=true;
+    if(statsStarted)endPlayStat(sessionInfo.id,sessionInfo.startedAt);
+    if(activeGameProcess===child){activeGameProcess=null;activeGameInfo=null;}
+    logEvent(reason,{gameId:game.id,title:game.title,core:coreId,...extra});
+  };
+  child.once('spawn',()=>{
+    statsStarted=true;beginPlayStat(game,coreId);
+    logEvent('launch_spawned',{gameId:game.id,title:game.title,core:coreId,pid:child.pid});
+  });
+  child.once('error',err=>{rememberFailedCore(game,coreId,'spawn_error');finalize('launch_spawn_error',{error:err.message});});
+  child.once('exit',(code,signal)=>{
+    const livedMs=Math.max(0,Date.now()-new Date(sessionInfo.startedAt).getTime());
+    const userStop=!!sessionInfo.stopRequested;
+    // A process merely staying open is not proof of compatibility. Learn a
+    // working core only after a normal/user-requested exit and meaningful play.
+    if((code===0 || userStop) && livedMs>=10000) rememberWorkingCore(game,coreId);
+    else if(!userStop && (code!==0 || livedMs<3000)) rememberFailedCore(game,coreId,code!==0?`exit_${code??'signal'}`:`early_exit_${code??'signal'}`);
+    try{touchStateMeta(game.gameId,'auto','Autosave');}catch(e){}
+    finalize('launch_exited',{code,signal,livedMs,userStop});
   });
 
   const u=user();
@@ -977,10 +999,16 @@ const server=http.createServer((req,res)=>{
 
   if(url.pathname==='/api/runtime'){
     return send(res,200,{
-      running:Boolean(activeGameProcess),
+      running:activeProcessRunning(),
       game:activeGameInfo,
       cabinetMode:SETTINGS.cabinetMode||{}
     });
+  }
+
+  if(url.pathname==='/api/runtime/stop'&&req.method==='POST'){
+    if(!activeProcessRunning())return send(res,200,{ok:true,running:false});
+    try{const info=activeGameInfo;if(activeGameInfo)activeGameInfo.stopRequested=true;activeGameProcess.kill();return send(res,200,{ok:true,running:true,stopping:info});}
+    catch(e){return send(res,500,{error:e.message});}
   }
 
   if(url.pathname==='/api/cabinet'&&req.method==='POST'){
@@ -1093,7 +1121,7 @@ const server=http.createServer((req,res)=>{
 });
 
 server.listen(SETTINGS.port,'127.0.0.1',()=>{
-  console.log('NEO MULTI v0.1.4');
+  console.log(`NEO MULTI v${HUB_VERSION}`);
   console.log(`Arcade backend: NEO ARCADE v${SETTINGS.version}`);
   console.log(`Biblioteca: ${ROM_ROOT}`);
   console.log(`Abra: http://127.0.0.1:${SETTINGS.port}`);

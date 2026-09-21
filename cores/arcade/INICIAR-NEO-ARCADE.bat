@@ -1,5 +1,5 @@
 @echo off
-title NEO ARCADE v0.2.9
+title NEO ARCADE v0.3.1
 cd /d "%~dp0"
 where node >nul 2>nul
 if errorlevel 1 (
@@ -8,6 +8,6 @@ if errorlevel 1 (
  pause
  exit /b 1
 )
-start "" "http://127.0.0.1:4780"
+start "" "http://127.0.0.1:4781"
 node server.js
 pause

@@ -11,6 +11,10 @@ export class PPU {
     this.visibleLines = 160;
     this.totalLines = 228;
     this.image = this.ctx.createImageData(240,160);
+    this.bgPriorityLine = new Uint8Array(240);
+    this.bgColorLine = new Uint16Array(240);
+    this.bgBitLine = new Uint8Array(240);
+    this.objPriorityLine = new Uint8Array(240);
     this.clear();
   }
 
@@ -48,9 +52,7 @@ export class PPU {
   }
 
   _raiseIRQ(bit) {
-    let iff = this._read16IO(0x202);
-    iff |= (1 << bit);
-    this._write16IO(0x202, iff);
+    this.memory.requestIRQ?.(1 << bit);
   }
 
   _checkVCountIRQ() {
@@ -76,43 +78,68 @@ export class PPU {
     d[p]=r; d[p+1]=g; d[p+2]=b; d[p+3]=255;
   }
 
+  _beginLineMetadata() {
+    const backdrop = this.memory.palette[0] | (this.memory.palette[1] << 8);
+    this.bgPriorityLine.fill(4);
+    this.bgColorLine.fill(backdrop);
+    this.bgBitLine.fill(1 << 5);
+    this.objPriorityLine.fill(4);
+  }
+
+  _setBackgroundPixel(x, y, color, priority = 4, topBit = (1 << 5)) {
+    if (x < 0 || x >= 240) return;
+    this.bgPriorityLine[x] = priority & 0xFF;
+    this.bgColorLine[x] = color & 0x7FFF;
+    this.bgBitLine[x] = topBit & 0x3F;
+    this._setPixel(x, y, color);
+  }
+
+  _readOAMS16(off) {
+    const v=this.memory.oam[off] | (this.memory.oam[off+1] << 8);
+    return v & 0x8000 ? v - 0x10000 : v;
+  }
+
   _renderMode3Line(y) {
+    const priority=this._read16IO(0x00C)&3;
     for (let x=0;x<240;x++) {
       const off = (y*240 + x)*2;
       const color = this.memory.vram[off] | (this.memory.vram[off+1] << 8);
-      this._setPixel(x,y,color);
+      this._setBackgroundPixel(x,y,color,priority,1<<2);
     }
   }
 
   _renderMode4Line(y) {
     const dispcnt = this._read16IO(0x000);
+    const priority=this._read16IO(0x00C)&3;
     const page = (dispcnt & (1<<4)) ? 0xA000 : 0;
     for (let x=0;x<240;x++) {
       const idx = this.memory.vram[page + y*240 + x] || 0;
       const po = idx * 2;
       const color = this.memory.palette[po] | (this.memory.palette[po+1] << 8);
-      this._setPixel(x,y,color);
+      this._setBackgroundPixel(x,y,color,priority,1<<2);
     }
   }
 
   _renderMode5Line(y) {
     const dispcnt = this._read16IO(0x000);
+    const priority=this._read16IO(0x00C)&3;
     const page = (dispcnt & (1<<4)) ? 0xA000 : 0;
     const width = 160, height = 128;
+    const backdrop = this.memory.palette[0] | (this.memory.palette[1] << 8);
     for (let x=0;x<240;x++) {
       if (x >= width || y >= height) {
-        this._setPixel(x,y,0);
+        this._setBackgroundPixel(x,y,backdrop,4,1<<5);
         continue;
       }
       const off = page + (y*width + x)*2;
       const color = this.memory.vram[off] | (this.memory.vram[off+1] << 8);
-      this._setPixel(x,y,color);
+      this._setBackgroundPixel(x,y,color,priority,1<<2);
     }
   }
 
   _renderFallbackLine(y) {
     const backdrop = this.memory.palette[0] | (this.memory.palette[1] << 8);
-    for (let x=0;x<240;x++) this._setPixel(x,y,backdrop);
+    for (let x=0;x<240;x++) this._setBackgroundPixel(x,y,backdrop,4,1<<5);
   }
 
   _objSize(shape, size) {
@@ -208,8 +235,11 @@ export class PPU {
 
     const backdrop = this.memory.palette[0] | (this.memory.palette[1] << 8);
     for (let x=0;x<240;x++) {
-      const color = layers[x] ? layers[x].color : backdrop;
-      this._setPixel(x,y,color);
+      const top=layers[x];
+      const color = top ? top.color : backdrop;
+      const bit = top ? (1<<top.bg) : (1<<5);
+      const effected=this._applySpecialEffect(color,backdrop,bit,1<<5,x,y);
+      this._setBackgroundPixel(x,y,effected,top?top.priority:4,bit);
     }
   }
 
@@ -296,7 +326,7 @@ export class PPU {
       const top=layers[x];
       const topBit=top ? (1<<top.bg) : (1<<5);
       const color=this._applySpecialEffect(top?top.color:backdrop, backdrop, topBit, (1<<5), x, y);
-      this._setPixel(x,y,color);
+      this._setBackgroundPixel(x,y,color,top?top.priority:4,topBit);
     }
   }
 
@@ -321,7 +351,10 @@ export class PPU {
   _renderSpritesLine(y) {
     const dispcnt = this._read16IO(0x000);
     if (!(dispcnt & (1<<12))) return; // OBJ enable
+    const oneDimensional = !!(dispcnt & (1<<6));
 
+    // High OAM indexes are processed first so lower indexes win ties, matching
+    // GBA OBJ-to-OBJ priority rules.
     for (let i=127;i>=0;i--) {
       const o = i*8;
       const attr0 = this.memory.oam[o] | (this.memory.oam[o+1]<<8);
@@ -329,22 +362,25 @@ export class PPU {
       const attr2 = this.memory.oam[o+4] | (this.memory.oam[o+5]<<8);
 
       const y0 = attr0 & 0xFF;
-      const objMode = (attr0 >>> 8) & 0x3;
       const affine = !!(attr0 & (1<<8));
-      const doubleSize = affine && !!(attr0 & (1<<9));
+      const disableOrDouble = !!(attr0 & (1<<9));
+      if (!affine && disableOrDouble) continue; // regular OBJ disable bit
+      const doubleSize = affine && disableOrDouble;
+      const objMode = (attr0 >>> 10) & 0x3;
+      if (objMode === 3) continue; // prohibited
       const objMosaic = !!(attr0 & (1<<12));
       const color256 = !!(attr0 & (1<<13));
       const shape = (attr0 >>> 14) & 0x3;
       const x0 = attr1 & 0x1FF;
       const size = (attr1 >>> 14) & 0x3;
-      let [w,h] = this._objSize(shape,size);
-      const baseW=w, baseH=h;
+      let [baseW,baseH] = this._objSize(shape,size);
+      let w=baseW,h=baseH;
       const affineIndex=(attr1>>>9)&0x1F;
       if (doubleSize) { w*=2; h*=2; }
+      const hflip=!affine && !!(attr1&(1<<12));
+      const vflip=!affine && !!(attr1&(1<<13));
       const sy = y0 >= 160 ? y0 - 256 : y0;
       const sx = x0 >= 240 ? x0 - 512 : x0;
-
-      if (objMode === 2) continue;
       if (y < sy || y >= sy+h) continue;
 
       let line = y - sy;
@@ -356,37 +392,76 @@ export class PPU {
         line = Math.floor(line / objMosaicV) * objMosaicV;
       }
       const tileIndex = attr2 & 0x3FF;
+      const priority = (attr2 >>> 10) & 3;
       const palBank = (attr2 >>> 12) & 0xF;
+
+      let pa=0x100,pb=0,pc=0,pd=0x100;
+      if (affine) {
+        const m=affineIndex*32;
+        pa=this._readOAMS16(m+6); pb=this._readOAMS16(m+14);
+        pc=this._readOAMS16(m+22); pd=this._readOAMS16(m+30);
+      }
 
       for (let px=0;px<w;px++) {
         const x = sx + px;
         if (x<0 || x>=240) continue;
+        if (priority > this.bgPriorityLine[x] || priority > this.objPriorityLine[x]) continue;
 
-        const samplePx = objMosaic ? Math.floor(px / objMosaicH) * objMosaicH : px;
-        const tileX = samplePx >> 3;
-        const tileY = sampleLine >> 3;
-        const inX = samplePx & 7;
-        const inY = sampleLine & 7;
+        let drawPx = objMosaic ? Math.floor(px / objMosaicH) * objMosaicH : px;
+        let srcX,srcY;
+        if (affine) {
+          const dx=drawPx-(w>>1), dy=line-(h>>1);
+          srcX=((pa*dx+pb*dy)>>8)+(baseW>>1);
+          srcY=((pc*dx+pd*dy)>>8)+(baseH>>1);
+          if(srcX<0||srcY<0||srcX>=baseW||srcY>=baseH)continue;
+        } else {
+          srcX=hflip?(baseW-1-drawPx):drawPx;
+          srcY=vflip?(baseH-1-line):line;
+        }
 
-        let colorIndex = 0;
+        const tileX=srcX>>3,tileY=srcY>>3,inX=srcX&7,inY=srcY&7;
+        const tilesPerRow=baseW>>3;
+        let tileUnit;
+        if(color256){
+          const base=tileIndex&~1;
+          tileUnit=oneDimensional ? base+tileY*tilesPerRow*2+tileX*2 : base+tileY*32+tileX*2;
+        }else{
+          tileUnit=oneDimensional ? tileIndex+tileY*tilesPerRow+tileX : tileIndex+tileY*32+tileX;
+        }
+
+        let colorIndex=0,color=0;
         if (color256) {
-          const tile = tileIndex + tileY*(w>>3) + tileX;
-          const addr = 0x10000 + tile*64 + inY*8 + inX;
+          const addr = 0x10000 + tileUnit*32 + inY*8 + inX;
           colorIndex = this.memory.vram[addr] || 0;
           if (!colorIndex) continue;
           const po = 0x200 + colorIndex*2;
-          const color = this.memory.palette[po] | (this.memory.palette[po+1]<<8);
-          this._setPixel(x,y,color);
+          color = this.memory.palette[po] | (this.memory.palette[po+1]<<8);
         } else {
-          const tile = tileIndex + tileY*(w>>3) + tileX;
-          const addr = 0x10000 + tile*32 + inY*4 + (inX>>1);
+          const addr = 0x10000 + tileUnit*32 + inY*4 + (inX>>1);
           const b = this.memory.vram[addr] || 0;
           colorIndex = (inX & 1) ? (b>>>4) : (b&0xF);
           if (!colorIndex) continue;
           const po = 0x200 + (palBank*16 + colorIndex)*2;
-          const color = this.memory.palette[po] | (this.memory.palette[po+1]<<8);
-          this._setPixel(x,y,color);
+          color = this.memory.palette[po] | (this.memory.palette[po+1]<<8);
         }
+
+        // OBJ-window pixels do not draw; they define a mask. Full layer masking
+        // is handled separately, so keep them non-destructive here.
+        if (objMode === 2) continue;
+
+        const bgColor=this.bgColorLine[x], bgBit=this.bgBitLine[x];
+        let final=color;
+        if (objMode === 1 && (this._windowMaskForPixel(x,y)&0x20)) {
+          const bldcnt=this._read16IO(0x050);
+          if ((((bldcnt>>>8)&0x3F)&bgBit)!==0) {
+            const a=this._read16IO(0x052);
+            final=this._blend555(color,bgColor,a&31,(a>>>8)&31);
+          }
+        } else {
+          final=this._applySpecialEffect(color,bgColor,1<<4,bgBit,x,y);
+        }
+        this._setPixel(x,y,final);
+        this.objPriorityLine[x]=priority;
       }
     }
   }
@@ -424,8 +499,12 @@ export class PPU {
 
   _windowMaskForPixel(x,y) {
     const dispcnt=this._read16IO(0x000), winin=this._read16IO(0x048), winout=this._read16IO(0x04A);
+    const anyWindow=!!(dispcnt&((1<<13)|(1<<14)|(1<<15)));
+    if (!anyWindow) return 0x3F;
     if ((dispcnt&(1<<13)) && this._windowContains(x,y,0x040,0x044)) return winin&0x3F;
     if ((dispcnt&(1<<14)) && this._windowContains(x,y,0x042,0x046)) return (winin>>>8)&0x3F;
+    // OBJ-window uses WINOUT's upper mask; full OBJ-window coverage is still
+    // approximated, but outside-window behavior is now hardware-compatible.
     return winout&0x3F;
   }
 
@@ -446,6 +525,7 @@ export class PPU {
     const dispcnt = this._read16IO(0x000);
     const mode = dispcnt & 0x7;
     const forcedBlank = !!(dispcnt & 0x80);
+    this._beginLineMetadata();
 
     if (forcedBlank) {
       for (let x=0;x<240;x++) this._setPixel(x,y,0x7FFF);
@@ -455,9 +535,9 @@ export class PPU {
     if (mode === 0) this._renderMode0Line(y);
     else if (mode === 1) this._renderMode1Line(y);
     else if (mode === 2) this._renderMode2Line(y);
-    else if (mode === 3) this._renderMode3Line(y);
-    else if (mode === 4) this._renderMode4Line(y);
-    else if (mode === 5) this._renderMode5Line(y);
+    else if (mode === 3) (dispcnt&(1<<10)) ? this._renderMode3Line(y) : this._renderFallbackLine(y);
+    else if (mode === 4) (dispcnt&(1<<10)) ? this._renderMode4Line(y) : this._renderFallbackLine(y);
+    else if (mode === 5) (dispcnt&(1<<10)) ? this._renderMode5Line(y) : this._renderFallbackLine(y);
     else this._renderFallbackLine(y);
 
     this._renderSpritesLine(y);
